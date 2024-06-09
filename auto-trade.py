@@ -32,12 +32,12 @@ if FLAG == "0":
     BASE_URL = "https://www.okx.com"
     API_KEY = "f52b2961-8c08-4af4-876c-d4c6bcebdc6c"
     SECRET_KEY = "7DB206F3D875F9062170D14B1BC23BEF"
-    PASSPHRASE = "Lwc1st+-"
+    PASSPHRASE = ""
 elif FLAG == "1":
     BASE_URL = "https://www.okx.com"
     API_KEY = "12648afa-8e43-4d58-87f3-1a1510698ce2"
     SECRET_KEY = "D9A798DF9EBC04954835D887B577386F"
-    PASSPHRASE = "Lwc1st+-"
+    PASSPHRASE = ""
 
 
 accountAPI = Account.AccountAPI(
