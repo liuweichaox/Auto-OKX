@@ -1,2 +1,4 @@
 python-okx
 ratelimit
+scikit-learn
+redis
