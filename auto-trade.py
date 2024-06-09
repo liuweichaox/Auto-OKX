@@ -157,12 +157,12 @@ def get_price_limit(ccy):
 
 @sleep_and_retry
 @limits(calls=40, period=2)
-def get_candlesticks(ccy, end_timestamp, start_timestamp, bar):
+def get_candlesticks(ccy, start_timestamp, end_timestamp, bar):
     # 获取交易产品K线数据 40次/2s
     response = marketAPI.get_candlesticks(
         instId=ccy,
-        after=str(end_timestamp),
-        before=str(start_timestamp),
+        after=str(start_timestamp),
+        before=str(end_timestamp),
         bar=bar,
         limit="300",
     )
@@ -173,7 +173,7 @@ def get_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
     all_data = []
 
     while True:
-        data = get_candlesticks(ccy, str(end_timestamp), str(start_timestamp), bar=bar)
+        data = get_candlesticks(ccy, start_timestamp, end_timestamp, bar=bar)
         if not data:
             break
         all_data.extend(data)
@@ -206,7 +206,7 @@ def get_price_data(ccy):
 
     end_timestamp = int(datetime.datetime.now().timestamp() * 1000)
 
-    data = get_candles_paginated(ccy, "1m", start_timestamp, end_timestamp)
+    data = get_candles_paginated(ccy, "1m", str(start_timestamp), str(end_timestamp))
 
     for candle in data:
         timestamp = int(candle[0])
