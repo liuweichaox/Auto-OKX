@@ -1,215 +1,254 @@
-2024-06-10 02:39:59,033 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-06-10 02:39:59,034 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
-2024-06-10 02:39:59,039 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-06-10 02:39:59,039 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
-2024-06-10 02:39:59,044 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-06-10 02:39:59,044 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
-2024-06-10 02:39:59,048 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-06-10 02:39:59,048 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
-2024-06-10 02:39:59,053 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-06-10 02:39:59,053 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
-2024-06-10 02:39:59,062 - DEBUG - connect_tcp.started host='www.okx.com' port=443 local_address=None timeout=5.0 socket_options=None
-2024-06-10 02:39:59,358 - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x176a29b50>
-2024-06-10 02:39:59,358 - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1768c9010> server_hostname='www.okx.com' timeout=5.0
-2024-06-10 02:39:59,743 - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x176a2cdd0>
-2024-06-10 02:39:59,746 - DEBUG - send_connection_init.started request=<Request [b'GET']>
-2024-06-10 02:39:59,747 - DEBUG - send_connection_init.complete
-2024-06-10 02:39:59,748 - DEBUG - send_request_headers.started request=<Request [b'GET']> stream_id=1
-2024-06-10 02:39:59,749 - DEBUG - Adding (b':method', b'GET') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,750 - DEBUG - Encoding 2 with 7 bits
-2024-06-10 02:39:59,750 - DEBUG - Adding (b':authority', b'www.okx.com') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,750 - DEBUG - Encoding 1 with 6 bits
-2024-06-10 02:39:59,750 - DEBUG - Encoding 9 with 7 bits
-2024-06-10 02:39:59,750 - DEBUG - Adding (b':scheme', b'https') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,750 - DEBUG - Encoding 7 with 7 bits
-2024-06-10 02:39:59,750 - DEBUG - Adding (b':path', b'/api/v5/market/history-candles?instId=DOGE-USDT&after=1717958340000&bar=1m&limit=100') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,750 - DEBUG - Encoding 4 with 6 bits
-2024-06-10 02:39:59,751 - DEBUG - Encoding 62 with 7 bits
-2024-06-10 02:39:59,751 - DEBUG - Adding (b'accept', b'*/*') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,751 - DEBUG - Encoding 19 with 6 bits
-2024-06-10 02:39:59,751 - DEBUG - Encoding 3 with 7 bits
-2024-06-10 02:39:59,751 - DEBUG - Adding (b'accept-encoding', b'gzip, deflate') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,751 - DEBUG - Encoding 16 with 7 bits
-2024-06-10 02:39:59,751 - DEBUG - Adding (b'user-agent', b'python-httpx/0.27.0') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,751 - DEBUG - Encoding 58 with 6 bits
-2024-06-10 02:39:59,751 - DEBUG - Encoding 14 with 7 bits
-2024-06-10 02:39:59,752 - DEBUG - Adding (b'content-type', b'application/json') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,752 - DEBUG - Encoding 31 with 6 bits
-2024-06-10 02:39:59,752 - DEBUG - Encoding 11 with 7 bits
-2024-06-10 02:39:59,752 - DEBUG - Adding (b'ok-access-key', b'f52b2961-8c08-4af4-876c-d4c6bcebdc6c') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,752 - DEBUG - Encoding 10 with 7 bits
-2024-06-10 02:39:59,752 - DEBUG - Encoding 26 with 7 bits
-2024-06-10 02:39:59,752 - DEBUG - Adding (b'ok-access-sign', b'8Do0mjllOn6EsfErY2NYqISQuGxm4kDUnRmTtcULGTM=') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,752 - DEBUG - Encoding 10 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Encoding 36 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Adding (b'ok-access-timestamp', b'2024-06-09T18:39:59.061Z') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,753 - DEBUG - Encoding 13 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Encoding 18 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Adding (b'ok-access-passphrase', b'Lwc1st+-') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,753 - DEBUG - Encoding 14 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Encoding 7 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Adding (b'x-simulated-trading', b'0') to the header table, sensitive:False, huffman:True
-2024-06-10 02:39:59,753 - DEBUG - Encoding 14 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Encoding 1 with 7 bits
-2024-06-10 02:39:59,753 - DEBUG - Encoded header block to b"\x82A\x89\xf1\xe3\xc2\xe7\xeb\xe5r\x1e\x9f\x87D\xbe`u\x99\x8e\xed\xb1H\xec\xeaT\xb19\x90\x93\xd9\xe9b\x0e\xa9(*?\xc3T\x84\xe4\x92\x0b\xfa\xb1`[\x86\xeb\xfb\xfe\x07*Kd\x01t.\xbe\xdb\xcc\xb4\x00\x00\x1f\x11\x8e\xc8\x03O\xc5\x06\xa4\xc9\x80 \x07S\x83\xf9c\xe7\x90z\x8e\xaf\xd2g=KN\x94\xd7\xe5\x80.'W\x07_\x8b\x1du\xd0b\r&=LtA\xea@\x8a?U\x86B\x15\x08[\xa9}\x7f\x9a\x95\xb1F'\xdc\n\xcf\x10\x0f,\xd0\xe5ig\x9dp\x8bH\xd1\x1c\x8c\x85\x8eB8O@\x8a?U\x86B\x15\x08Y\x06\x9a\xaf\xa4z\xf9\xc1OJ(\xd5S\x98\x11.\x0b9\x8bO>\xd97l\xb7\x17\x9aZ\xeb\x7f\x85[i\xde\x92p\xcf\x8b~\x88?@\x8d?U\x86B\x15\x08Y&\xa4\xa8H\xe9\xaf\x92\x10\x04\xd2\xc0q`?\xbc/\\e\xfb\x8d\xbe\xb8\x1c\x0f\xef@\x8e?U\x86B\x15\x08Z\xb1\xa1\x15\xcf`\xd0_\x87\xcf\xe0\x81B\x7f\xda\xdf@\x8e\xf2\xb2\rM\xb4\r%\x91d\xd89\rT\xdf\x81\x07"
-2024-06-10 02:39:59,754 - DEBUG - send_request_headers.complete
-2024-06-10 02:39:59,754 - DEBUG - send_request_body.started request=<Request [b'GET']> stream_id=1
-2024-06-10 02:39:59,754 - DEBUG - send_request_body.complete
-2024-06-10 02:39:59,754 - DEBUG - receive_response_headers.started request=<Request [b'GET']> stream_id=1
-2024-06-10 02:40:00,496 - DEBUG - receive_remote_settings.started
-2024-06-10 02:40:00,497 - DEBUG - receive_remote_settings.complete return_value=<RemoteSettingsChanged changed_settings:{ChangedSetting(setting=3, original_value=None, new_value=100), ChangedSetting(setting=4, original_value=65535, new_value=65536), ChangedSetting(setting=5, original_value=16384, new_value=16777215)}>
-2024-06-10 02:40:00,597 - DEBUG - Decoding b'?\xe1\x1f\x88a\x96\xddm_J\x01\xf52\xdbR\x82\x00\x9aP/\\h\x17\x00\x051h\xdf_\x8b\x1du\xd0b\r&=LtA\xea{\x8b\x84\x84-i[\x05D<\x86\xaao@\x86\x8dj\x0eA\xd0_\x84-Qp\xdd@\x86?U\x87*Kg\x89\x0b\xa1u\xf6\xc4\xcb@\x00\x01@\x87?U\xa3,\xa7\xb0\xbf\x89\x0b\xa1u\xf6\xde\x13\xc0\x00\x01@\x90\xf2\xb1\x0fRKRVO\xaa\xca\xb1\xebI\x8fR?\x85\xa8\xe8\xa8\xd2\xcb@\x8c\xf2\xb7\x94!j\xec:JD\x98\xf5\x7f\x8a\x0f\xda\x94\x9eB\xc1\x1d\x07\'_X\xa1\xa8\xeb\x10d\x9c\xbfJTu\x90\x93\xd8_\xa5)\x1f\x95\x871`\x07\xd2\x94\xda\x84\xada{\x8e\x83H4\x97@\x85\xae\xc1\xcdH\xff\x86\xa8\xeb\x10d\x9c\xbfd\x010@\x8b\xf2\xb4\xb6\x0e\x92\xacz\xd2c\xd4\x8f\x89\xdd\x0e\x8c\x1a\xb6\xe4\xc5\x93O@\x88\xf2\xb4v\x1f\xa9l4\x9f\x010x\xa0\xa4~V\x1c\xc5\x81\xc6@\xe8\x80\x00}\xa8j\x89E\xb2\x17u\xb1\xc8zFj\x91\xf6\xa5v\x16\x83\x8eOZ\x83\x9b\xd9\xab@\x8a$\xab\x10d\x9c\xab!#M\xa8\x86\xbf\xcfL:2^w\xffD\x8a"K\x14t\xc1\xd7G\xef\x99:\xb9\xbe\xb8\xa1~K\xdbvf\xcf\xc2\xa2;\x92\xf8\xbfv~q\xa7\xaem\xc7\xde\xe5\xe8\xf9jJH\xb0]\x0b\xaf\xb6\xf3@\x02\xc1\\\x0b\x85p\xadl\xd1\xe0\xdb\x86\xdfp\xe5\xe9\xaeN\xac\x97\xdd\xbcv\xd9Q\x9c\xe3\xb7}\xd7a\xa0\x99za\xa4}^&=\xee\xf3\x1ek\xbe\x85\x1eoz%\xf6\x8a2k\xeb\xcc\xa2\xc9\xd9\xcc\xe9r^8\xa9\xbe\x8d}9\xd6o\x0c\xe1\xc7\xa6\x1f\xb5+\x1ag\x81\x8f\xb5\x0b\xe6\xb3XTA\xba\xda\xbe\x94\x03\xebe\xb6\xa5\x84\xd2\x81~\xe0Ap\x00S\x16\x8d\xffjHzFj\xa0\\\xfd|\xaeC\xd3\xf6\xa64\xa6\xbdUQ\xeb\xedM\xc5%\xb6\x17\xedM\xc3\xa4\xbb\x8c\x92\xc1\xa4\xf5\x17v\x87%\x07\xb6Ih\x1d\x85@\x85$\xabX?_\x8fy\xf0\xb2\xcc\xae6\xf4b,\x92\x96E\xb4\xed\xdf'
-2024-06-10 02:40:00,597 - DEBUG - Decoded 4096, consumed 3 bytes
-2024-06-10 02:40:00,597 - DEBUG - Resizing header table to 4096 from 4096
-2024-06-10 02:40:00,597 - DEBUG - Decoded 8, consumed 1 bytes
-2024-06-10 02:40:00,597 - DEBUG - Decoded (b':status', b'200'), consumed 1
-2024-06-10 02:40:00,597 - DEBUG - Decoded 33, consumed 1 bytes
-2024-06-10 02:40:00,597 - DEBUG - Decoded 22, consumed 1 bytes
-2024-06-10 02:40:00,597 - DEBUG - Decoded (b'date', b'Sun, 09 Jun 2024 18:40:00 GMT'), total consumed 24 bytes, indexed True
-2024-06-10 02:40:00,597 - DEBUG - Decoded 31, consumed 1 bytes
-2024-06-10 02:40:00,597 - DEBUG - Decoded 11, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'content-type', b'application/json'), total consumed 13 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 59, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 11, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'vary', b'Accept-Encoding'), total consumed 13 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 6, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 4, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'b-locale', b'en_US'), total consumed 13 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 6, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 9, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'ok-after', b'1717952340000'), total consumed 18 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 7, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 9, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'ok-before', b'1717958280000'), total consumed 19 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 16, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 5, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'x-content-type-options', b'nosniff'), total consumed 24 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 12, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 10, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'x-xss-protection', b'1; mode=block'), total consumed 25 bytes, indexed True
-2024-06-10 02:40:00,598 - DEBUG - Decoded 24, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded 33, consumed 1 bytes
-2024-06-10 02:40:00,598 - DEBUG - Decoded (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), total consumed 35 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 5, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 6, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'pragma', b'no-cache'), total consumed 14 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 36, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 1, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'expires', <memory at 0x176857a00>), total consumed 3 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 11, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 9, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'x-frame-options', b'SAMEORIGIN'), total consumed 23 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 8, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 1, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'x-brokerid', <memory at 0x176857f40>), total consumed 12 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 56, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 32, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), total consumed 34 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 26, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 3, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'content-encoding', b'gzip'), total consumed 5 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 10, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded 6, consumed 1 bytes
-2024-06-10 02:40:00,599 - DEBUG - Decoded (b'cf-cache-status', b'DYNAMIC'), total consumed 19 bytes, indexed True
-2024-06-10 02:40:00,599 - DEBUG - Decoded 55, consumed 1 bytes
-2024-06-10 02:40:00,600 - DEBUG - Decoded 195, consumed 2 bytes
-2024-06-10 02:40:00,600 - DEBUG - Decoded (b'set-cookie', b'__cf_bm=kMZxdk6Tp_A9dCRQKLUnc7ID2ZQXVmkKSoT6CbWOttc-1717958400-1.0.1.1-ugbERFuzAJjPdk3ezuVRrni6VRTB7AlcJjFmak8cHT7YaKBy2bKzMfzslIPkYe2Iq6Lt6fVGmDsPjYpiw3FHNA; path=/; expires=Sun, 09-Jun-24 19:10:00 GMT; domain=.okx.com; HttpOnly; Secure; SameSite=None'), total consumed 198 bytes, indexed True
-2024-06-10 02:40:00,600 - DEBUG - Decoded 54, consumed 1 bytes
-2024-06-10 02:40:00,600 - DEBUG - Decoded 7, consumed 1 bytes
-2024-06-10 02:40:00,600 - DEBUG - Decoded (b'server', b'cloudflare'), total consumed 9 bytes, indexed True
-2024-06-10 02:40:00,600 - DEBUG - Decoded 5, consumed 1 bytes
-2024-06-10 02:40:00,600 - DEBUG - Decoded 15, consumed 1 bytes
-2024-06-10 02:40:00,600 - DEBUG - Decoded (b'cf-ray', b'89133f658b2edfed-NRT'), total consumed 23 bytes, indexed True
-2024-06-10 02:40:00,600 - DEBUG - receive_response_headers.complete return_value=(200, [(b'date', b'Sun, 09 Jun 2024 18:40:00 GMT'), (b'content-type', b'application/json'), (b'vary', b'Accept-Encoding'), (b'b-locale', b'en_US'), (b'ok-after', b'1717952340000'), (b'ok-before', b'1717958280000'), (b'x-content-type-options', b'nosniff'), (b'x-xss-protection', b'1; mode=block'), (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), (b'pragma', b'no-cache'), (b'expires', b'0'), (b'x-frame-options', b'SAMEORIGIN'), (b'x-brokerid', b'0'), (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), (b'content-encoding', b'gzip'), (b'cf-cache-status', b'DYNAMIC'), (b'set-cookie', b'__cf_bm=kMZxdk6Tp_A9dCRQKLUnc7ID2ZQXVmkKSoT6CbWOttc-1717958400-1.0.1.1-ugbERFuzAJjPdk3ezuVRrni6VRTB7AlcJjFmak8cHT7YaKBy2bKzMfzslIPkYe2Iq6Lt6fVGmDsPjYpiw3FHNA; path=/; expires=Sun, 09-Jun-24 19:10:00 GMT; domain=.okx.com; HttpOnly; Secure; SameSite=None'), (b'server', b'cloudflare'), (b'cf-ray', b'89133f658b2edfed-NRT')])
-2024-06-10 02:40:00,602 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/history-candles?instId=DOGE-USDT&after=1717958340000&bar=1m&limit=100 "HTTP/2 200 OK"
-2024-06-10 02:40:00,602 - DEBUG - receive_response_body.started request=<Request [b'GET']> stream_id=1
-2024-06-10 02:40:00,691 - DEBUG - receive_response_body.complete
-2024-06-10 02:40:00,691 - DEBUG - response_closed.started stream_id=1
-2024-06-10 02:40:00,691 - DEBUG - response_closed.complete
-2024-06-10 02:40:00,706 - DEBUG - send_request_headers.started request=<Request [b'GET']> stream_id=3
-2024-06-10 02:40:00,706 - DEBUG - Adding (b':method', b'GET') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,706 - DEBUG - Encoding 2 with 7 bits
-2024-06-10 02:40:00,706 - DEBUG - Adding (b':authority', b'www.okx.com') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,706 - DEBUG - Encoding 71 with 7 bits
-2024-06-10 02:40:00,707 - DEBUG - Adding (b':scheme', b'https') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,707 - DEBUG - Encoding 7 with 7 bits
-2024-06-10 02:40:00,707 - DEBUG - Adding (b':path', b'/api/v5/market/history-candles?instId=DOGE-USDT&after=1717952340000&bar=1m&limit=100') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,707 - DEBUG - Encoding 4 with 6 bits
-2024-06-10 02:40:00,707 - DEBUG - Encoding 62 with 7 bits
-2024-06-10 02:40:00,707 - DEBUG - Adding (b'accept', b'*/*') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,707 - DEBUG - Encoding 70 with 7 bits
-2024-06-10 02:40:00,707 - DEBUG - Adding (b'accept-encoding', b'gzip, deflate') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,707 - DEBUG - Encoding 16 with 7 bits
-2024-06-10 02:40:00,707 - DEBUG - Adding (b'user-agent', b'python-httpx/0.27.0') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,707 - DEBUG - Encoding 69 with 7 bits
-2024-06-10 02:40:00,707 - DEBUG - Adding (b'content-type', b'application/json') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,707 - DEBUG - Encoding 68 with 7 bits
-2024-06-10 02:40:00,708 - DEBUG - Adding (b'ok-access-key', b'f52b2961-8c08-4af4-876c-d4c6bcebdc6c') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,708 - DEBUG - Encoding 67 with 7 bits
-2024-06-10 02:40:00,708 - DEBUG - Adding (b'ok-access-sign', b'3o9RbXawdqRPu7E2I6qyh2xp42b2Fef9XFpKNKnUrSU=') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,708 - DEBUG - Encoding 66 with 6 bits
-2024-06-10 02:40:00,708 - DEBUG - Encoding 35 with 7 bits
-2024-06-10 02:40:00,708 - DEBUG - Adding (b'ok-access-timestamp', b'2024-06-09T18:40:00.704Z') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,708 - DEBUG - Encoding 66 with 6 bits
-2024-06-10 02:40:00,708 - DEBUG - Encoding 18 with 7 bits
-2024-06-10 02:40:00,708 - DEBUG - Adding (b'ok-access-passphrase', b'Lwc1st+-') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,708 - DEBUG - Encoding 66 with 7 bits
-2024-06-10 02:40:00,708 - DEBUG - Adding (b'x-simulated-trading', b'0') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,708 - DEBUG - Encoding 65 with 7 bits
-2024-06-10 02:40:00,708 - DEBUG - Adding (b'cookie', b'__cf_bm=kMZxdk6Tp_A9dCRQKLUnc7ID2ZQXVmkKSoT6CbWOttc-1717958400-1.0.1.1-ugbERFuzAJjPdk3ezuVRrni6VRTB7AlcJjFmak8cHT7YaKBy2bKzMfzslIPkYe2Iq6Lt6fVGmDsPjYpiw3FHNA') to the header table, sensitive:False, huffman:True
-2024-06-10 02:40:00,708 - DEBUG - Encoding 32 with 6 bits
-2024-06-10 02:40:00,709 - DEBUG - Encoding 124 with 7 bits
-2024-06-10 02:40:00,709 - DEBUG - Encoded header block to b'\x82\xc7\x87D\xbe`u\x99\x8e\xed\xb1H\xec\xeaT\xb19\x90\x93\xd9\xe9b\x0e\xa9(*?\xc3T\x84\xe4\x92\x0b\xfa\xb1`[\x86\xeb\xfb\xfe\x07*Kd\x01t.\xbe\xd8\x99h\x00\x00>#\x1d\x90\x06\x9f\x8a\rI\x93\x00@\x0f\xc6\x90\xc5\xc4\xc3\x7f\x03\xa3d\xef\xed\x8f\xf0~$\xed\xb7]\xae\xe0\x16G;z\x9c^khQ\x8b\te\x7f\xf3\ry\xb4\xe6\xab\x85\x9b\xb8A\x7f\x03\x92\x10\x04\xd2\xc0q`?\xbc/\\h\x17\x00\x05\xdd\x03_\xbf\xc2\xc1`\xfc\x8a"K\x14t\xc1\xd7G\xef\x99:\xb9\xbe\xb8\xa1~K\xdbvf\xcf\xc2\xa2;\x92\xf8\xbfv~q\xa7\xaem\xc7\xde\xe5\xe8\xf9jJH\xb0]\x0b\xaf\xb6\xf3@\x02\xc1\\\x0b\x85p\xadl\xd1\xe0\xdb\x86\xdfp\xe5\xe9\xaeN\xac\x97\xdd\xbcv\xd9Q\x9c\xe3\xb7}\xd7a\xa0\x99za\xa4}^&=\xee\xf3\x1ek\xbe\x85\x1eoz%\xf6\x8a2k\xeb\xcc\xa2\xc9\xd9\xcc\xe9r^8\xa9\xbe\x8d}9\xd6o\x0c\xe1\xc7\xa6\x1f'
-2024-06-10 02:40:00,709 - DEBUG - send_request_headers.complete
-2024-06-10 02:40:00,709 - DEBUG - send_request_body.started request=<Request [b'GET']> stream_id=3
-2024-06-10 02:40:00,709 - DEBUG - send_request_body.complete
-2024-06-10 02:40:00,709 - DEBUG - receive_response_headers.started request=<Request [b'GET']> stream_id=3
-2024-06-10 02:40:01,011 - DEBUG - Decoding b'\x88a\x96\xddm_J\x01\xf52\xdbR\x82\x00\x9aP/\\h\x17\x00\x151h\xdf\xd0\xcf\xce\x7f\x0e\x89\x0b\xa1u\xf6\x9ce\xa0\x00\x00\x7f\x0e\x89\x0b\xa1u\xf6\xc4\'\x80\x00\x03\xcd\xcc\xcb\xca\xc9\xc8\xc7\xc6\xc5\xc4\xc2\x7f\x02\x8fy\xf0\xb2\xcc\xae;,\x8e\x0eIK"\xdav\xef'
-2024-06-10 02:40:01,012 - DEBUG - Decoded 8, consumed 1 bytes
-2024-06-10 02:40:01,012 - DEBUG - Decoded (b':status', b'200'), consumed 1
-2024-06-10 02:40:01,012 - DEBUG - Decoded 33, consumed 1 bytes
-2024-06-10 02:40:01,012 - DEBUG - Decoded 22, consumed 1 bytes
-2024-06-10 02:40:01,013 - DEBUG - Decoded (b'date', b'Sun, 09 Jun 2024 18:40:01 GMT'), total consumed 24 bytes, indexed True
-2024-06-10 02:40:01,013 - DEBUG - Decoded 80, consumed 1 bytes
-2024-06-10 02:40:01,013 - DEBUG - Decoded (b'content-type', b'application/json'), consumed 1
-2024-06-10 02:40:01,013 - DEBUG - Decoded 79, consumed 1 bytes
-2024-06-10 02:40:01,014 - DEBUG - Decoded (b'vary', b'Accept-Encoding'), consumed 1
-2024-06-10 02:40:01,014 - DEBUG - Decoded 78, consumed 1 bytes
-2024-06-10 02:40:01,014 - DEBUG - Decoded (b'b-locale', b'en_US'), consumed 1
-2024-06-10 02:40:01,014 - DEBUG - Decoded 77, consumed 2 bytes
-2024-06-10 02:40:01,015 - DEBUG - Decoded 9, consumed 1 bytes
-2024-06-10 02:40:01,015 - DEBUG - Decoded (b'ok-after', b'1717946340000'), total consumed 12 bytes, indexed True
-2024-06-10 02:40:01,015 - DEBUG - Decoded 77, consumed 2 bytes
-2024-06-10 02:40:01,015 - DEBUG - Decoded 9, consumed 1 bytes
-2024-06-10 02:40:01,015 - DEBUG - Decoded (b'ok-before', b'1717952280000'), total consumed 12 bytes, indexed True
-2024-06-10 02:40:01,015 - DEBUG - Decoded 77, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'x-content-type-options', b'nosniff'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 76, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'x-xss-protection', b'1; mode=block'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 75, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 74, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'pragma', b'no-cache'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 73, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'expires', <memory at 0x176857a00>), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 72, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'x-frame-options', b'SAMEORIGIN'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 71, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'x-brokerid', <memory at 0x176857f40>), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 70, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 69, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'content-encoding', b'gzip'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 68, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'cf-cache-status', b'DYNAMIC'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 66, consumed 1 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded (b'server', b'cloudflare'), consumed 1
-2024-06-10 02:40:01,016 - DEBUG - Decoded 65, consumed 2 bytes
-2024-06-10 02:40:01,016 - DEBUG - Decoded 15, consumed 1 bytes
-2024-06-10 02:40:01,017 - DEBUG - Decoded (b'cf-ray', b'89133f67fd6adfed-NRT'), total consumed 18 bytes, indexed True
-2024-06-10 02:40:01,017 - DEBUG - receive_response_headers.complete return_value=(200, [(b'date', b'Sun, 09 Jun 2024 18:40:01 GMT'), (b'content-type', b'application/json'), (b'vary', b'Accept-Encoding'), (b'b-locale', b'en_US'), (b'ok-after', b'1717946340000'), (b'ok-before', b'1717952280000'), (b'x-content-type-options', b'nosniff'), (b'x-xss-protection', b'1; mode=block'), (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), (b'pragma', b'no-cache'), (b'expires', b'0'), (b'x-frame-options', b'SAMEORIGIN'), (b'x-brokerid', b'0'), (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), (b'content-encoding', b'gzip'), (b'cf-cache-status', b'DYNAMIC'), (b'server', b'cloudflare'), (b'cf-ray', b'89133f67fd6adfed-NRT')])
-2024-06-10 02:40:01,017 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/history-candles?instId=DOGE-USDT&after=1717952340000&bar=1m&limit=100 "HTTP/2 200 OK"
-2024-06-10 02:40:01,018 - DEBUG - receive_response_body.started request=<Request [b'GET']> stream_id=3
-2024-06-10 02:40:01,053 - DEBUG - receive_response_body.complete
-2024-06-10 02:40:01,054 - DEBUG - response_closed.started stream_id=3
-2024-06-10 02:40:01,055 - DEBUG - response_closed.complete
+2024-06-10 03:20:52,716 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-06-10 03:20:52,717 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-06-10 03:20:52,722 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-06-10 03:20:52,722 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-06-10 03:20:52,727 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-06-10 03:20:52,727 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-06-10 03:20:52,731 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-06-10 03:20:52,731 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-06-10 03:20:52,736 - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-06-10 03:20:52,736 - DEBUG - load_verify_locations cafile='/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-06-10 03:21:15,975 - DEBUG - connect_tcp.started host='www.okx.com' port=443 local_address=None timeout=5.0 socket_options=None
+2024-06-10 03:21:16,428 - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x157823ed0>
+2024-06-10 03:21:16,428 - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1577c9010> server_hostname='www.okx.com' timeout=5.0
+2024-06-10 03:21:17,655 - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x156cebf50>
+2024-06-10 03:21:17,656 - DEBUG - send_connection_init.started request=<Request [b'GET']>
+2024-06-10 03:21:17,657 - DEBUG - send_connection_init.complete
+2024-06-10 03:21:17,657 - DEBUG - send_request_headers.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:17,658 - DEBUG - Adding (b':method', b'GET') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 2 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b':authority', b'www.okx.com') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 1 with 6 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 9 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b':scheme', b'https') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 7 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b':path', b'/api/v5/market/candles?instId=CORE-USDT&before=1717956000000&bar=1m&limit=100') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 4 with 6 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 57 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'accept', b'*/*') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 19 with 6 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 3 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'accept-encoding', b'gzip, deflate') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 16 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'user-agent', b'python-httpx/0.27.0') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 58 with 6 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 14 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'content-type', b'application/json') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 31 with 6 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 11 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'ok-access-key', b'f52b2961-8c08-4af4-876c-d4c6bcebdc6c') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 10 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 26 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'ok-access-sign', b'04u3FwDuv5+fFtyLge78gw39RMBvn7zzGSJCh3FLzTg=') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 10 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 36 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'ok-access-timestamp', b'2024-06-09T19:21:15.974Z') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 13 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 18 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'ok-access-passphrase', b'Lwc1st+-') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 14 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 7 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Adding (b'x-simulated-trading', b'0') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:17,658 - DEBUG - Encoding 14 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoding 1 with 7 bits
+2024-06-10 03:21:17,658 - DEBUG - Encoded header block to b"\x82A\x89\xf1\xe3\xc2\xe7\xeb\xe5r\x1e\x9f\x87D\xb9`u\x99\x8e\xed\xb1H\xec\xeaT\xb0A\xd5%\x05G\xf8j\x90\x9c\x92A{V\xdc\x0bp\xdd\x7f\x7f\xc4e\x94\xf6\x16\x00\xba\x17_m\xc0\x00\x00\x00>#\x1d\x90\x06\x9f\x8a\rI\x93\x00@\x0fS\x83\xf9c\xe7\x90z\x8e\xaf\xd2g=KN\x94\xd7\xe5\x80.'W\x07_\x8b\x1du\xd0b\r&=LtA\xea@\x8a?U\x86B\x15\x08[\xa9}\x7f\x9a\x95\xb1F'\xdc\n\xcf\x10\x0f,\xd0\xe5ig\x9dp\x8bH\xd1\x1c\x8c\x85\x8eB8O@\x8a?U\x86B\x15\x08Y\x06\x9a\xaf\xa4\x03V\xb3\x87\xc5\xfb{\xb7\xfe\xe5\xc2\x9fY\xe6+\xafM\xe1\x97\xf6\xe8\xbb\xde\xa7}\xfb\xc5\xbb-\xe9\xd9\xc3\x9f\xde\xf9\xa0@\x8d?U\x86B\x15\x08Y&\xa4\xa8H\xe9\xaf\x92\x10\x04\xd2\xc0q`?\xbc/\xdc\x10n\x05\xb5\xdfu\xaf\xdf@\x8e?U\x86B\x15\x08Z\xb1\xa1\x15\xcf`\xd0_\x87\xcf\xe0\x81B\x7f\xda\xdf@\x8e\xf2\xb2\rM\xb4\r%\x91d\xd89\rT\xdf\x81\x07"
+2024-06-10 03:21:17,659 - DEBUG - send_request_headers.complete
+2024-06-10 03:21:17,659 - DEBUG - send_request_body.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:17,659 - DEBUG - send_request_body.complete
+2024-06-10 03:21:17,659 - DEBUG - receive_response_headers.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:17,941 - DEBUG - receive_remote_settings.started
+2024-06-10 03:21:17,942 - DEBUG - receive_remote_settings.complete return_value=<RemoteSettingsChanged changed_settings:{ChangedSetting(setting=3, original_value=None, new_value=100), ChangedSetting(setting=4, original_value=65535, new_value=65536), ChangedSetting(setting=5, original_value=16384, new_value=16777215)}>
+2024-06-10 03:21:18,091 - DEBUG - Decoding b'?\xe1\x1f\x88a\x96\xddm_J\x01\xf52\xdbR\x82\x00\x9aP/\xdc\x10n\x05\xe51h\xdf_\x8b\x1du\xd0b\r&=LtA\xea{\x8b\x84\x84-i[\x05D<\x86\xaao@\x86\x8dj\x0eA\xd0_\x84-Qp\xdd@\x86?U\x87*Kg\x89\x0b\xa1u\xf6\xdc\x03\x80\x00\x01@\x87?U\xa3,\xa7\xb0\xbf\x89\x0b\xa1u\xf7\x00\xf3\x80\x00\x01@\x90\xf2\xb1\x0fRKRVO\xaa\xca\xb1\xebI\x8fR?\x85\xa8\xe8\xa8\xd2\xcb@\x8c\xf2\xb7\x94!j\xec:JD\x98\xf5\x7f\x8a\x0f\xda\x94\x9eB\xc1\x1d\x07\'_X\xa1\xa8\xeb\x10d\x9c\xbfJTu\x90\x93\xd8_\xa5)\x1f\x95\x871`\x07\xd2\x94\xda\x84\xada{\x8e\x83H4\x97@\x85\xae\xc1\xcdH\xff\x86\xa8\xeb\x10d\x9c\xbfd\x010x\x9a\xa4~V\x1c\xc5\x81\x90\xb6\xcb\x80\x00\x14\xfbP\xd5\x12\x8bd.\xebc\xbezFj\x91x\xa0\xa4~V\x1c\xc5\x81\xc6@\xe8\x80\x00}\xa8j\x89E\xb2\x17u\xb1\xc8zFj\x91\xf6\xa5v\x16\x83\x8eO@\x8b\xf2\xb4\xb6\x0e\x92\xacz\xd2c\xd4\x8f\x89\xdd\x0e\x8c\x1a\xb6\xe4\xc5\x93O@\x88\xf2\xb4v\x1f\xa9l4\x9f\x010Z\x83\x9b\xd9\xab@\x8a$\xab\x10d\x9c\xab!#M\xa8\x86\xbf\xcfL:2^w\xffB\x8a"K\x14t\xc1\xe7\x90{\x00\x93\xe8\xd6\xcbUr-\xb8\x9e\nQ\xe5\xb7\xd3\xfb\t1~9G\xab|\xdf\xdb\xde\xd6\xb1\xf8\xa3\xc2\xc1t.\xbe\xe0\x1eu\xe5\x82\xb8\x17\n\xe1Y\x03\xbaw\xac\xd8\x11!v\xbb>\xe4\xde\x1b\\\x9f\x97O\x88=j>~\x90\xc2m>\x8d\xa1\xdb\xd95t\x7f\xbf\'v`\xc3\xef_Z\x8f.{|s\xd5\xb3\x9e\xd8z\xec\xa7\x1b\xba\x809m\x97P\x00=\x8d\xf9\xe7\xa9\xd8~\xd4\xaci\x9e\x06>\xd4/\x9a\xcdaQ\x06\xebj\xfaP\x0f\xad\x96\xda\x96\x13J\x05\xfb\x8d\x86\xe0^S\x16\x8d\xffjHzFj\xa0\\\xfd|\xaeC\xd3\xf6\xa64\xa6\xbdUQ\xeb\xedM\xc5%\xb6\x17\xedM\xc3\xa4\xbb\x8c\x92\xc1\xa4\xf5\x17v\x87%\x07\xb6Ih\x1d\x85@\x85$\xabX?_\x8fy\xf0\xb2\xece\x03\x84 \xca\x00\x85m;w\xff'
+2024-06-10 03:21:18,092 - DEBUG - Decoded 4096, consumed 3 bytes
+2024-06-10 03:21:18,092 - DEBUG - Resizing header table to 4096 from 4096
+2024-06-10 03:21:18,093 - DEBUG - Decoded 8, consumed 1 bytes
+2024-06-10 03:21:18,093 - DEBUG - Decoded (b':status', b'200'), consumed 1
+2024-06-10 03:21:18,093 - DEBUG - Decoded 33, consumed 1 bytes
+2024-06-10 03:21:18,093 - DEBUG - Decoded 22, consumed 1 bytes
+2024-06-10 03:21:18,093 - DEBUG - Decoded (b'date', b'Sun, 09 Jun 2024 19:21:18 GMT'), total consumed 24 bytes, indexed True
+2024-06-10 03:21:18,093 - DEBUG - Decoded 31, consumed 1 bytes
+2024-06-10 03:21:18,093 - DEBUG - Decoded 11, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded (b'content-type', b'application/json'), total consumed 13 bytes, indexed True
+2024-06-10 03:21:18,094 - DEBUG - Decoded 59, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded 11, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded (b'vary', b'Accept-Encoding'), total consumed 13 bytes, indexed True
+2024-06-10 03:21:18,094 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded 4, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded (b'b-locale', b'en_US'), total consumed 13 bytes, indexed True
+2024-06-10 03:21:18,094 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded 9, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded (b'ok-after', b'1717956060000'), total consumed 18 bytes, indexed True
+2024-06-10 03:21:18,094 - DEBUG - Decoded 7, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded 9, consumed 1 bytes
+2024-06-10 03:21:18,094 - DEBUG - Decoded (b'ok-before', b'1717960860000'), total consumed 19 bytes, indexed True
+2024-06-10 03:21:18,095 - DEBUG - Decoded 16, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded 5, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded (b'x-content-type-options', b'nosniff'), total consumed 24 bytes, indexed True
+2024-06-10 03:21:18,095 - DEBUG - Decoded 12, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded 10, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded (b'x-xss-protection', b'1; mode=block'), total consumed 25 bytes, indexed True
+2024-06-10 03:21:18,095 - DEBUG - Decoded 24, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded 33, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), total consumed 35 bytes, indexed True
+2024-06-10 03:21:18,095 - DEBUG - Decoded 5, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded (b'pragma', b'no-cache'), total consumed 14 bytes, indexed True
+2024-06-10 03:21:18,095 - DEBUG - Decoded 36, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded 1, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded (b'expires', <memory at 0x157757f40>), total consumed 3 bytes, indexed True
+2024-06-10 03:21:18,095 - DEBUG - Decoded 56, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded 26, consumed 1 bytes
+2024-06-10 03:21:18,095 - DEBUG - Decoded (b'strict-transport-security', b'max-age=31536000 ; includeSubDomains'), total consumed 28 bytes, indexed True
+2024-06-10 03:21:18,096 - DEBUG - Decoded 56, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded 32, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), total consumed 34 bytes, indexed True
+2024-06-10 03:21:18,096 - DEBUG - Decoded 11, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded 9, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded (b'x-frame-options', b'SAMEORIGIN'), total consumed 23 bytes, indexed True
+2024-06-10 03:21:18,096 - DEBUG - Decoded 8, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded 1, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded (b'x-brokerid', <memory at 0x157757e80>), total consumed 12 bytes, indexed True
+2024-06-10 03:21:18,096 - DEBUG - Decoded 26, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded 3, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded (b'content-encoding', b'gzip'), total consumed 5 bytes, indexed True
+2024-06-10 03:21:18,096 - DEBUG - Decoded 10, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:18,096 - DEBUG - Decoded (b'cf-cache-status', b'DYNAMIC'), total consumed 19 bytes, indexed True
+2024-06-10 03:21:18,096 - DEBUG - Decoded 55, consumed 1 bytes
+2024-06-10 03:21:18,097 - DEBUG - Decoded 193, consumed 2 bytes
+2024-06-10 03:21:18,097 - DEBUG - Decoded (b'set-cookie', b'__cf_bm=xW1q0chMP34nWeuG81tsx59tZAcGX6lyuxDRvu4Hwlw-1717960878-1.0.1.1-saBo8rQ12s.4q96gw5.cXBoG1knoLjAAiNyiM7CIOj9vW7QEFzPknofLuwYOQYRAkQmH7O0afufO00aQ5xYO7A; path=/; expires=Sun, 09-Jun-24 19:51:18 GMT; domain=.okx.com; HttpOnly; Secure; SameSite=None'), total consumed 196 bytes, indexed True
+2024-06-10 03:21:18,097 - DEBUG - Decoded 54, consumed 1 bytes
+2024-06-10 03:21:18,097 - DEBUG - Decoded 7, consumed 1 bytes
+2024-06-10 03:21:18,097 - DEBUG - Decoded (b'server', b'cloudflare'), total consumed 9 bytes, indexed True
+2024-06-10 03:21:18,097 - DEBUG - Decoded 5, consumed 1 bytes
+2024-06-10 03:21:18,097 - DEBUG - Decoded 15, consumed 1 bytes
+2024-06-10 03:21:18,097 - DEBUG - Decoded (b'cf-ray', b'89137be06ccae011-NRT'), total consumed 23 bytes, indexed True
+2024-06-10 03:21:18,097 - DEBUG - receive_response_headers.complete return_value=(200, [(b'date', b'Sun, 09 Jun 2024 19:21:18 GMT'), (b'content-type', b'application/json'), (b'vary', b'Accept-Encoding'), (b'b-locale', b'en_US'), (b'ok-after', b'1717956060000'), (b'ok-before', b'1717960860000'), (b'x-content-type-options', b'nosniff'), (b'x-xss-protection', b'1; mode=block'), (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), (b'pragma', b'no-cache'), (b'expires', b'0'), (b'strict-transport-security', b'max-age=31536000 ; includeSubDomains'), (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), (b'x-frame-options', b'SAMEORIGIN'), (b'x-brokerid', b'0'), (b'content-encoding', b'gzip'), (b'cf-cache-status', b'DYNAMIC'), (b'set-cookie', b'__cf_bm=xW1q0chMP34nWeuG81tsx59tZAcGX6lyuxDRvu4Hwlw-1717960878-1.0.1.1-saBo8rQ12s.4q96gw5.cXBoG1knoLjAAiNyiM7CIOj9vW7QEFzPknofLuwYOQYRAkQmH7O0afufO00aQ5xYO7A; path=/; expires=Sun, 09-Jun-24 19:51:18 GMT; domain=.okx.com; HttpOnly; Secure; SameSite=None'), (b'server', b'cloudflare'), (b'cf-ray', b'89137be06ccae011-NRT')])
+2024-06-10 03:21:18,098 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=CORE-USDT&before=1717956000000&bar=1m&limit=100 "HTTP/2 200 OK"
+2024-06-10 03:21:18,099 - DEBUG - receive_response_body.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:18,193 - DEBUG - receive_response_body.complete
+2024-06-10 03:21:18,193 - DEBUG - response_closed.started stream_id=1
+2024-06-10 03:21:18,194 - DEBUG - response_closed.complete
+2024-06-10 03:21:47,977 - DEBUG - close.started
+2024-06-10 03:21:47,978 - DEBUG - close.complete
+2024-06-10 03:21:47,978 - DEBUG - connect_tcp.started host='www.okx.com' port=443 local_address=None timeout=5.0 socket_options=None
+2024-06-10 03:21:48,687 - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x15786a910>
+2024-06-10 03:21:48,687 - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1577c9010> server_hostname='www.okx.com' timeout=5.0
+2024-06-10 03:21:49,255 - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x157869fd0>
+2024-06-10 03:21:49,256 - DEBUG - send_connection_init.started request=<Request [b'GET']>
+2024-06-10 03:21:49,257 - DEBUG - send_connection_init.complete
+2024-06-10 03:21:49,257 - DEBUG - send_request_headers.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:49,257 - DEBUG - Adding (b':method', b'GET') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,257 - DEBUG - Encoding 2 with 7 bits
+2024-06-10 03:21:49,257 - DEBUG - Adding (b':authority', b'www.okx.com') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,257 - DEBUG - Encoding 1 with 6 bits
+2024-06-10 03:21:49,257 - DEBUG - Encoding 9 with 7 bits
+2024-06-10 03:21:49,257 - DEBUG - Adding (b':scheme', b'https') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,257 - DEBUG - Encoding 7 with 7 bits
+2024-06-10 03:21:49,257 - DEBUG - Adding (b':path', b'/api/v5/market/candles?instId=CORE-USDT&before=1717956060000&bar=1m&limit=100') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,257 - DEBUG - Encoding 4 with 6 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 57 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'accept', b'*/*') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 19 with 6 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 3 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'accept-encoding', b'gzip, deflate') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 16 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'user-agent', b'python-httpx/0.27.0') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 58 with 6 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 14 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'content-type', b'application/json') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 31 with 6 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 11 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'ok-access-key', b'f52b2961-8c08-4af4-876c-d4c6bcebdc6c') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 10 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 26 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'ok-access-sign', b'KENSsXTg/E0mqYc/V7OtjWRDIrhUHjldTb4yBnxeY+Y=') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 10 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 37 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'ok-access-timestamp', b'2024-06-09T19:21:47.976Z') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 13 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 18 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'ok-access-passphrase', b'Lwc1st+-') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 14 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 7 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'x-simulated-trading', b'0') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 14 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 1 with 7 bits
+2024-06-10 03:21:49,258 - DEBUG - Adding (b'cookie', b'__cf_bm=xW1q0chMP34nWeuG81tsx59tZAcGX6lyuxDRvu4Hwlw-1717960878-1.0.1.1-saBo8rQ12s.4q96gw5.cXBoG1knoLjAAiNyiM7CIOj9vW7QEFzPknofLuwYOQYRAkQmH7O0afufO00aQ5xYO7A') to the header table, sensitive:False, huffman:True
+2024-06-10 03:21:49,258 - DEBUG - Encoding 32 with 6 bits
+2024-06-10 03:21:49,258 - DEBUG - Encoding 122 with 7 bits
+2024-06-10 03:21:49,259 - DEBUG - Encoded header block to b'\x82A\x89\xf1\xe3\xc2\xe7\xeb\xe5r\x1e\x9f\x87D\xb9`u\x99\x8e\xed\xb1H\xec\xeaT\xb0A\xd5%\x05G\xf8j\x90\x9c\x92A{V\xdc\x0bp\xdd\x7f\x7f\xc4e\x94\xf6\x16\x00\xba\x17_m\xc08\x00\x00\x1f\x11\x8e\xc8\x03O\xc5\x06\xa4\xc9\x80 \x07S\x83\xf9c\xe7\x90z\x8e\xaf\xd2g=KN\x94\xd7\xe5\x80.\'W\x07_\x8b\x1du\xd0b\r&=LtA\xea@\x8a?U\x86B\x15\x08[\xa9}\x7f\x9a\x95\xb1F\'\xdc\n\xcf\x10\x0f,\xd0\xe5ig\x9dp\x8bH\xd1\x1c\x8c\x85\x8eB8O@\x8a?U\x86B\x15\x08Y\x06\x9a\xaf\xa5\xcd\x83N\xe4~o\x99\x8c\x00\xa7\xb721\xc5\xddI\xe9\xcbm\xfc\x96O\xc3\x1fJ$\xdf\x1b^\xae\xd5\xe4\xbc\xff\xdf8?@\x8d?U\x86B\x15\x08Y&\xa4\xa8H\xe9\xaf\x92\x10\x04\xd2\xc0q`?\xbc/\xdc\x10n4\xea\xef\xba\xe7\xef@\x8e?U\x86B\x15\x08Z\xb1\xa1\x15\xcf`\xd0_\x87\xcf\xe0\x81B\x7f\xda\xdf@\x8e\xf2\xb2\rM\xb4\r%\x91d\xd89\rT\xdf\x81\x07`\xfa\x8a"K\x14t\xc1\xe7\x90{\x00\x93\xe8\xd6\xcbUr-\xb8\x9e\nQ\xe5\xb7\xd3\xfb\t1~9G\xab|\xdf\xdb\xde\xd6\xb1\xf8\xa3\xc2\xc1t.\xbe\xe0\x1eu\xe5\x82\xb8\x17\n\xe1Y\x03\xbaw\xac\xd8\x11!v\xbb>\xe4\xde\x1b\\\x9f\x97O\x88=j>~\x90\xc2m>\x8d\xa1\xdb\xd95t\x7f\xbf\'v`\xc3\xef_Z\x8f.{|s\xd5\xb3\x9e\xd8z\xec\xa7\x1b\xba\x809m\x97P\x00=\x8d\xf9\xe7\xa9\xd8\x7f'
+2024-06-10 03:21:49,259 - DEBUG - send_request_headers.complete
+2024-06-10 03:21:49,259 - DEBUG - send_request_body.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:49,259 - DEBUG - send_request_body.complete
+2024-06-10 03:21:49,259 - DEBUG - receive_response_headers.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:49,610 - DEBUG - receive_remote_settings.started
+2024-06-10 03:21:49,611 - DEBUG - receive_remote_settings.complete return_value=<RemoteSettingsChanged changed_settings:{ChangedSetting(setting=3, original_value=None, new_value=100), ChangedSetting(setting=4, original_value=65535, new_value=65536), ChangedSetting(setting=5, original_value=16384, new_value=16777215)}>
+2024-06-10 03:21:49,611 - DEBUG - Decoding b"?\xe1\x1f\x88a\x96\xddm_J\x01\xf52\xdbR\x82\x00\x9aP/\xdc\x10n4\xfa\x98\xb4o_\x8b\x1du\xd0b\r&=LtA\xea{\x8b\x84\x84-i[\x05D<\x86\xaao@\x86\x8dj\x0eA\xd0_\x84-Qp\xdd@\x86?U\x87*Kg\x89\x0b\xa1u\xf6\xdc\x08\x80\x00\x03@\x87?U\xa3,\xa7\xb0\xbf\x89\x0b\xa1u\xf7\x00\xf3\x80\x00\x01@\x90\xf2\xb1\x0fRKRVO\xaa\xca\xb1\xebI\x8fR?\x85\xa8\xe8\xa8\xd2\xcb@\x8c\xf2\xb7\x94!j\xec:JD\x98\xf5\x7f\x8a\x0f\xda\x94\x9eB\xc1\x1d\x07'_X\xa1\xa8\xeb\x10d\x9c\xbfJTu\x90\x93\xd8_\xa5)\x1f\x95\x871`\x07\xd2\x94\xda\x84\xada{\x8e\x83H4\x97@\x85\xae\xc1\xcdH\xff\x86\xa8\xeb\x10d\x9c\xbfd\x010x\x9a\xa4~V\x1c\xc5\x81\x90\xb6\xcb\x80\x00\x14\xfbP\xd5\x12\x8bd.\xebc\xbezFj\x91x\xa0\xa4~V\x1c\xc5\x81\xc6@\xe8\x80\x00}\xa8j\x89E\xb2\x17u\xb1\xc8zFj\x91\xf6\xa5v\x16\x83\x8eO@\x8b\xf2\xb4\xb6\x0e\x92\xacz\xd2c\xd4\x8f\x89\xdd\x0e\x8c\x1a\xb6\xe4\xc5\x93O@\x88\xf2\xb4v\x1f\xa9l4\x9f\x010Z\x83\x9b\xd9\xab@\x8a$\xab\x10d\x9c\xab!#M\xa8\x86\xbf\xcfL:2^v\x87%\x07\xb6Ih\x1d\x85@\x85$\xabX?_\x8fy\xf0\xb2\xe9\x06\xd9$\x18\xe5l\xaf\xad\xa7n\xff"
+2024-06-10 03:21:49,611 - DEBUG - Decoded 4096, consumed 3 bytes
+2024-06-10 03:21:49,612 - DEBUG - Resizing header table to 4096 from 4096
+2024-06-10 03:21:49,612 - DEBUG - Decoded 8, consumed 1 bytes
+2024-06-10 03:21:49,612 - DEBUG - Decoded (b':status', b'200'), consumed 1
+2024-06-10 03:21:49,612 - DEBUG - Decoded 33, consumed 1 bytes
+2024-06-10 03:21:49,612 - DEBUG - Decoded 22, consumed 1 bytes
+2024-06-10 03:21:49,612 - DEBUG - Decoded (b'date', b'Sun, 09 Jun 2024 19:21:49 GMT'), total consumed 24 bytes, indexed True
+2024-06-10 03:21:49,612 - DEBUG - Decoded 31, consumed 1 bytes
+2024-06-10 03:21:49,612 - DEBUG - Decoded 11, consumed 1 bytes
+2024-06-10 03:21:49,612 - DEBUG - Decoded (b'content-type', b'application/json'), total consumed 13 bytes, indexed True
+2024-06-10 03:21:49,613 - DEBUG - Decoded 59, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded 11, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded (b'vary', b'Accept-Encoding'), total consumed 13 bytes, indexed True
+2024-06-10 03:21:49,613 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded 4, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded (b'b-locale', b'en_US'), total consumed 13 bytes, indexed True
+2024-06-10 03:21:49,613 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded 9, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded (b'ok-after', b'1717956120000'), total consumed 18 bytes, indexed True
+2024-06-10 03:21:49,613 - DEBUG - Decoded 7, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded 9, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded (b'ok-before', b'1717960860000'), total consumed 19 bytes, indexed True
+2024-06-10 03:21:49,613 - DEBUG - Decoded 16, consumed 1 bytes
+2024-06-10 03:21:49,613 - DEBUG - Decoded 5, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'x-content-type-options', b'nosniff'), total consumed 24 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 12, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 10, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'x-xss-protection', b'1; mode=block'), total consumed 25 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 24, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 33, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), total consumed 35 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 5, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'pragma', b'no-cache'), total consumed 14 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 36, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 1, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'expires', <memory at 0x157880400>), total consumed 3 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 56, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 26, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'strict-transport-security', b'max-age=31536000 ; includeSubDomains'), total consumed 28 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 56, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 32, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), total consumed 34 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 11, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 9, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'x-frame-options', b'SAMEORIGIN'), total consumed 23 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 8, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 1, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded (b'x-brokerid', <memory at 0x1578804c0>), total consumed 12 bytes, indexed True
+2024-06-10 03:21:49,614 - DEBUG - Decoded 26, consumed 1 bytes
+2024-06-10 03:21:49,614 - DEBUG - Decoded 3, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded (b'content-encoding', b'gzip'), total consumed 5 bytes, indexed True
+2024-06-10 03:21:49,615 - DEBUG - Decoded 10, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded 6, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded (b'cf-cache-status', b'DYNAMIC'), total consumed 19 bytes, indexed True
+2024-06-10 03:21:49,615 - DEBUG - Decoded 54, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded 7, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded (b'server', b'cloudflare'), total consumed 9 bytes, indexed True
+2024-06-10 03:21:49,615 - DEBUG - Decoded 5, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded 15, consumed 1 bytes
+2024-06-10 03:21:49,615 - DEBUG - Decoded (b'cf-ray', b'89137ca5cdaaf5e9-NRT'), total consumed 23 bytes, indexed True
+2024-06-10 03:21:49,615 - DEBUG - receive_response_headers.complete return_value=(200, [(b'date', b'Sun, 09 Jun 2024 19:21:49 GMT'), (b'content-type', b'application/json'), (b'vary', b'Accept-Encoding'), (b'b-locale', b'en_US'), (b'ok-after', b'1717956120000'), (b'ok-before', b'1717960860000'), (b'x-content-type-options', b'nosniff'), (b'x-xss-protection', b'1; mode=block'), (b'cache-control', b'no-cache, no-store, max-age=0, must-revalidate'), (b'pragma', b'no-cache'), (b'expires', b'0'), (b'strict-transport-security', b'max-age=31536000 ; includeSubDomains'), (b'strict-transport-security', b'max-age=63072000; includeSubdomains; preload'), (b'x-frame-options', b'SAMEORIGIN'), (b'x-brokerid', b'0'), (b'content-encoding', b'gzip'), (b'cf-cache-status', b'DYNAMIC'), (b'server', b'cloudflare'), (b'cf-ray', b'89137ca5cdaaf5e9-NRT')])
+2024-06-10 03:21:49,616 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=CORE-USDT&before=1717956060000&bar=1m&limit=100 "HTTP/2 200 OK"
+2024-06-10 03:21:49,616 - DEBUG - receive_response_body.started request=<Request [b'GET']> stream_id=1
+2024-06-10 03:21:49,803 - DEBUG - receive_response_body.complete
+2024-06-10 03:21:49,803 - DEBUG - response_closed.started stream_id=1
+2024-06-10 03:21:49,803 - DEBUG - response_closed.complete

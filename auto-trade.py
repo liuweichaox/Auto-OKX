@@ -161,11 +161,13 @@ def get_price_limit(ccy):
 
 @sleep_and_retry
 @limits(calls=40, period=2)
-def get_candlesticks(ccy, end_timestamp, bar):
+def get_candlesticks(ccy, bar):
     # 获取交易产品K线数据 40次/2s
+    now = datetime.datetime.now()
+    truncated_now = now.replace(second=0, microsecond=0)
     response = marketAPI.get_candlesticks(
         instId=ccy,
-        before=str(end_timestamp),
+        before=str(int(truncated_now.timestamp() * 1000)),
         bar=bar,
         limit="300",
     )
@@ -185,7 +187,7 @@ def get_history_candlesticks(ccy, end_timestamp, bar):
     return response["data"]
 
 
-def get_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
+def get_history_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
     all_data = []
 
     while True:
@@ -194,7 +196,7 @@ def get_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
             break
         all_data.extend(data)
 
-        if start_timestamp == int(data[0][0]):
+        if any(int(row[0]) == start_timestamp for row in data):
             break
         end_timestamp = int(data[-1][0])
         time.sleep(0.01)
@@ -209,35 +211,40 @@ def get_price_data(ccy):
     cached_data = redis_client.get(cache_key)
     now = datetime.datetime.now()
     truncated_now = now.replace(second=0, microsecond=0)
+    seven_days_ago_timestamp = int(
+        (truncated_now - datetime.timedelta(days=7)).timestamp() * 1000
+    )
     if cached_data:
         price_data = json.loads(cached_data)  # 转换为 list
         if len(price_data) > 0:
-            # 根据上次数据确定开始时间
             start_timestamp = price_data[-1][0]
+            end_timestamp = int(truncated_now.timestamp() * 1000)
         else:
-            start_time = truncated_now - datetime.timedelta(days=7)
-            start_timestamp = int(start_time.timestamp() * 1000)
-
+            start_timestamp = seven_days_ago_timestamp
+            end_timestamp = int(truncated_now.timestamp() * 1000)
+            price_data = []
     else:
-        start_time = truncated_now - datetime.timedelta(days=7)
-        start_timestamp = int(start_time.timestamp() * 1000)
+        start_timestamp = seven_days_ago_timestamp
+        end_timestamp = int(truncated_now.timestamp() * 1000)
         price_data = []
-    end_timestamp = int(truncated_now.timestamp() * 1000)
 
     # 获取历史数据
-    historical_data = get_candles_paginated(ccy, "1m", start_timestamp, end_timestamp)
+    if len(price_data) != 0:
+        historical_data = get_history_candles_paginated(
+            ccy, "1m", start_timestamp, end_timestamp
+        )
+        fetch_price_data_from_candlesticks(price_data, historical_data)
 
     # 获取最近数据
-    recent_data = get_candlesticks(ccy, end_timestamp, "1m")
+    recent_data = get_candlesticks(ccy, "1m")
+    recent_min_timestamp = recent_data[-1][0]
+    if not any(int(row[0]) == recent_min_timestamp for row in price_data):
+        historical_data = get_history_candles_paginated(
+            ccy, "1m", price_data[-1][0], recent_min_timestamp
+        )
+        fetch_price_data_from_candlesticks(price_data, historical_data)
 
-    # 合并数据
-    all_data = historical_data + recent_data
-    existing_timestamps = {entry[0] for entry in price_data}
-    for candle in all_data:
-        timestamp = int(candle[0])
-        if timestamp not in existing_timestamps:
-            close_price = float(candle[4])
-            price_data.append([timestamp, close_price])
+    price_data = [entry for entry in price_data if entry[0] < seven_days_ago_timestamp]
 
     # 根据时间戳排序
     price_data = sorted(price_data, key=lambda x: x[0])
@@ -246,6 +253,15 @@ def get_price_data(ccy):
     redis_client.set(cache_key, json.dumps(price_data))
 
     return price_data
+
+
+def fetch_price_data_from_candlesticks(price_data, candlesticks):
+    existing_timestamps = {entry[0] for entry in price_data}
+    for candle in candlesticks:
+        timestamp = int(candle[0])
+        if timestamp not in existing_timestamps:
+            close_price = float(candle[4])
+            price_data.append([timestamp, close_price])
 
 
 def predict_trend(price_data):
