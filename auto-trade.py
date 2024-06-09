@@ -348,6 +348,7 @@ def auto_trade(symbols):
                             f"当前价格 {current_price} 在 {stop_loss_price} ~ {take_profit_price} 范围内, 未来一分钟预测价格: {future_price}, 涨跌: ",
                             (round(current_price - buy_price, 5)),
                         )
+                        continue
 
                     if sell_order["code"] != "0":
                         msg = sell_order["msg"]
