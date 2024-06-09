@@ -306,21 +306,26 @@ def auto_trade(symbols):
                         msg = order["data"][0]["sMsg"]
                     console_log(ccy, "下单错误", msg)
                     break
-                order_id = order["data"][0]["ordId"]
-                console_log(ccy, "下单", order_id)
+                buy_order_id = order["data"][0]["ordId"]
+                console_log(ccy, "下单", buy_order_id)
                 # 监控订单状态
                 while True:
-                    status = monitor_order_status(ccy, order_id)
-                    if status != "live":
-                        console_log(ccy, "订单状态", status)
+                    buy_status = monitor_order_status(ccy, buy_order_id)
+                    if buy_status != "live":
+                        console_log(ccy, "买入订单状态", buy_status)
                         break
                     else:
-                        console_log(ccy, "等待成交, 订单状态", status)
+                        console_log(ccy, "等待成交, 订单状态", buy_status)
                         console_log(ccy, "目标价格", buy_price)
                         console_log(ccy, "当前价格", get_current_price(ccy))
 
                 # 监控止盈止损订单状态
                 while True:
+                    buy_status = monitor_order_status(ccy, sell_order_id)
+                    if buy_status != "live":
+                        console_log(ccy, "买入订单状态", buy_status)
+                        break
+
                     # 获取历史价格数据
                     price_data = get_price_data(ccy)
 
@@ -358,7 +363,7 @@ def auto_trade(symbols):
                         console_log(ccy, "下单止盈止损错误", msg)
                         break
                     sell_order_id = sell_order["data"][0]["ordId"]
-                    console_log(ccy, "下单止盈止损", order_id)
+                    console_log(ccy, "下单止盈止损", sell_order_id)
                     status = monitor_order_status(ccy, sell_order_id)
                     if status != "live":
                         console_log(ccy, "止盈止损订单状态", status)
@@ -383,6 +388,6 @@ def console_log(ccy, target_name, target_value):
 # 调用自动交易函数
 if __name__ == "__main__":
     print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    symbols = ["CORE-USDT"]  # 币种代码列表
+    symbols = ["PEOPLE-USDT"]  # 币种代码列表
     auto_trade(symbols)
     print("自动交易系统已停止运行")
