@@ -323,7 +323,7 @@ def auto_trade(symbols):
 
                 # 监控止盈止损订单状态
                 while True:
-                    buy_status = monitor_order_status(ccy, sell_order_id)
+                    buy_status = monitor_order_status(ccy, buy_order_id)
                     if buy_status != "live":
                         console_log(ccy, "买入订单状态", buy_status)
                         break
