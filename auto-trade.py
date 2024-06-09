@@ -32,12 +32,12 @@ if FLAG == "0":
     BASE_URL = "https://www.okx.com"
     API_KEY = "f52b2961-8c08-4af4-876c-d4c6bcebdc6c"
     SECRET_KEY = "7DB206F3D875F9062170D14B1BC23BEF"
-    PASSPHRASE = ""
+    PASSPHRASE = "Lwc1st+-"
 elif FLAG == "1":
     BASE_URL = "https://www.okx.com"
     API_KEY = "12648afa-8e43-4d58-87f3-1a1510698ce2"
     SECRET_KEY = "D9A798DF9EBC04954835D887B577386F"
-    PASSPHRASE = ""
+    PASSPHRASE = "Lwc1st+-"
 
 
 accountAPI = Account.AccountAPI(
@@ -337,7 +337,10 @@ def auto_trade(symbols):
                     if current_price >= take_profit_price:
                         sell_order = place_order(ccy, "sell", size, current_price)
 
-                    if current_price <= stop_loss_price or future_price < buy_price:
+                    if (
+                        current_price <= stop_loss_price
+                        or future_price < stop_loss_price
+                    ):
                         sell_order = place_order(ccy, "sell", size, stop_loss_price)
 
                     if not sell_order:
