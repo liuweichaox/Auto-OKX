@@ -267,7 +267,7 @@ def get_max_avail_size(ccy):
     return info["data"][0]
 
 
-def auto_trade(symbols):
+def auto_trade(symbols, stop_loss_price_ratio=0.02, take_profit_price_ratio=0.03):
     while True:
         try:
             for ccy in symbols:
@@ -282,8 +282,8 @@ def auto_trade(symbols):
                 console_log(ccy, "实时价格", buy_price)
 
                 # 止盈止损价格
-                stop_loss_price = round(buy_price * (1 - 0.02), 5)
-                take_profit_price = round(buy_price * (1 + 0.03), 5)
+                stop_loss_price = round(buy_price * (1 - stop_loss_price_ratio), 5)
+                take_profit_price = round(buy_price * (1 + take_profit_price_ratio), 5)
 
                 # 检查限价
                 price_limit = get_price_limit(ccy)
@@ -339,7 +339,6 @@ def auto_trade(symbols):
                     availSell = float(availSell)
                     minSz = product_info["minSz"]
                     minSz = float(minSz)
-                    min_amount = round((size * stop_loss_price), 5)
                     if availSell < minSz:
                         console_log(ccy, "可用余额不足", availSell)
                         break
