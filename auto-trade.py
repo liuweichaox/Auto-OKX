@@ -164,7 +164,9 @@ def get_price_limit(ccy):
 def get_candlesticks(ccy, bar):
     # 获取交易产品K线数据 40次/2s
     now = datetime.datetime.now()
-    truncated_now = now.replace(second=0, microsecond=0)
+    truncated_now = now.replace(second=0, microsecond=0) - datetime.timedelta(
+        minutes=10
+    )
     response = marketAPI.get_candlesticks(
         instId=ccy,
         before=str(int(truncated_now.timestamp() * 1000)),
@@ -178,6 +180,7 @@ def get_candlesticks(ccy, bar):
 @limits(calls=20, period=2)
 def get_history_candlesticks(ccy, end_timestamp, bar):
     # 获取交易产品历史K线数据 20次/2s
+    # 时间是从后往前找，所以是以最大的时间为准，向前查找
     response = marketAPI.get_history_candlesticks(
         instId=ccy,
         after=str(end_timestamp),
@@ -237,14 +240,15 @@ def get_price_data(ccy):
 
     # 获取最近数据
     recent_data = get_candlesticks(ccy, "1m")
-    recent_min_timestamp = recent_data[-1][0]
-    if not any(int(row[0]) == recent_min_timestamp for row in price_data):
-        historical_data = get_history_candles_paginated(
-            ccy, "1m", price_data[-1][0], recent_min_timestamp
-        )
-        fetch_price_data_from_candlesticks(price_data, historical_data)
+    if recent_data and len(recent_data) > 0:
+        recent_min_timestamp = recent_data[-1][0]
+        if not any(int(row[0]) == recent_min_timestamp for row in price_data):
+            historical_data = get_history_candles_paginated(
+                ccy, "1m", price_data[-1][0], recent_min_timestamp
+            )
+            fetch_price_data_from_candlesticks(price_data, historical_data)
 
-    price_data = [entry for entry in price_data if entry[0] < seven_days_ago_timestamp]
+    price_data = [entry for entry in price_data if entry[0] >= seven_days_ago_timestamp]
 
     # 根据时间戳排序
     price_data = sorted(price_data, key=lambda x: x[0])
@@ -445,7 +449,7 @@ def console_log(ccy, target_name, target_value):
 # 调用自动交易函数
 if __name__ == "__main__":
     get_price_data("DOGE-USDT")
-    # print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    # symbols = ["CEL-USDT"]  # 币种代码列表
-    # auto_trade(symbols)
-    # print("自动交易系统已停止运行")
+    print("欢迎使用自动交易系统！正在初始化，请稍候...")
+    symbols = ["CEL-USDT"]  # 币种代码列表
+    auto_trade(symbols)
+    print("自动交易系统已停止运行")
