@@ -274,8 +274,8 @@ def auto_trade(symbols):
                 console_log(ccy, "实时价格", buy_price)
 
                 # 止盈止损价格
-                stop_loss_price = buy_price * (1 - 0.02)
-                take_profit_price = buy_price * (1 + 0.03)
+                stop_loss_price = round(buy_price * (1 - 0.02), 5)
+                take_profit_price = round(buy_price * (1 + 0.03), 5)
 
                 # 检查限价
                 price_limit = get_price_limit(ccy)
