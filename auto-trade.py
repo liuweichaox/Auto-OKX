@@ -348,7 +348,6 @@ def auto_trade(symbols):
                             f"当前价格 {current_price} 在 {stop_loss_price} ~ {take_profit_price} 范围内, 未来一分钟预测价格: {future_price}, 涨跌: ",
                             (round(current_price - buy_price, 5)),
                         )
-                        continue
 
                     if sell_order["code"] != "0":
                         msg = sell_order["msg"]
@@ -357,7 +356,6 @@ def auto_trade(symbols):
                         console_log(ccy, "下单止盈止损错误", msg)
                         break
                     sell_order_id = sell_order["data"][0]["ordId"]
-                    console_log(ccy, "下单止盈止损", sell_order_id)
                     status = monitor_order_status(ccy, sell_order_id)
                     if status != "live":
                         console_log(ccy, "止盈止损订单状态", status)
