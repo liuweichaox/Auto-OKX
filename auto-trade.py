@@ -232,11 +232,10 @@ def get_price_data(ccy):
         price_data = []
 
     # 获取历史数据
-    if len(price_data) != 0:
-        historical_data = get_history_candles_paginated(
-            ccy, "1m", start_timestamp, end_timestamp
-        )
-        fetch_price_data_from_candlesticks(price_data, historical_data)
+    historical_data = get_history_candles_paginated(
+        ccy, "1m", start_timestamp, end_timestamp
+    )
+    price_data.extend(fetch_price_data_from_candlesticks(price_data, historical_data))
 
     # 获取最近数据
     recent_data = get_candlesticks(ccy, "1m")
@@ -246,7 +245,9 @@ def get_price_data(ccy):
             historical_data = get_history_candles_paginated(
                 ccy, "1m", price_data[-1][0], recent_min_timestamp
             )
-            fetch_price_data_from_candlesticks(price_data, historical_data)
+            price_data.extend(
+                fetch_price_data_from_candlesticks(price_data, historical_data)
+            )
 
     price_data = [entry for entry in price_data if entry[0] >= seven_days_ago_timestamp]
 
@@ -261,11 +262,13 @@ def get_price_data(ccy):
 
 def fetch_price_data_from_candlesticks(price_data, candlesticks):
     existing_timestamps = {entry[0] for entry in price_data}
+    results = []
     for candle in candlesticks:
         timestamp = int(candle[0])
         if timestamp not in existing_timestamps:
             close_price = float(candle[4])
-            price_data.append([timestamp, close_price])
+            results.append([timestamp, close_price])
+    return results
 
 
 def predict_trend(price_data):
@@ -448,6 +451,7 @@ def console_log(ccy, target_name, target_value):
 
 # 调用自动交易函数
 if __name__ == "__main__":
+    get_price_data("CEL-USDT")
     print("欢迎使用自动交易系统！正在初始化，请稍候...")
     symbols = ["CEL-USDT"]  # 币种代码列表
     auto_trade(symbols)
