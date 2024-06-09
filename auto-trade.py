@@ -13,8 +13,6 @@ import okx.Funding as Funding
 from ratelimit import limits, sleep_and_retry
 import traceback
 
-redis_client = redis.StrictRedis(host="localhost", port=6379, db=0, password="123456")
-
 # 初始化日志记录器
 logging.basicConfig(
     level=logging.DEBUG,
@@ -33,11 +31,17 @@ if FLAG == "0":
     API_KEY = "f52b2961-8c08-4af4-876c-d4c6bcebdc6c"
     SECRET_KEY = "7DB206F3D875F9062170D14B1BC23BEF"
     PASSPHRASE = "Lwc1st+-"
+    redis_client = redis.StrictRedis(
+        host="localhost", port=6379, db=0, password="123456"
+    )
 elif FLAG == "1":
     BASE_URL = "https://www.okx.com"
     API_KEY = "12648afa-8e43-4d58-87f3-1a1510698ce2"
     SECRET_KEY = "D9A798DF9EBC04954835D887B577386F"
     PASSPHRASE = "Lwc1st+-"
+    redis_client = redis.StrictRedis(
+        host="localhost", port=6379, db=1, password="123456"
+    )
 
 
 accountAPI = Account.AccountAPI(
@@ -157,14 +161,26 @@ def get_price_limit(ccy):
 
 @sleep_and_retry
 @limits(calls=40, period=2)
-def get_candlesticks(ccy, start_timestamp, end_timestamp, bar):
+def get_candlesticks(ccy, end_timestamp, bar):
     # 获取交易产品K线数据 40次/2s
     response = marketAPI.get_candlesticks(
         instId=ccy,
-        after=str(start_timestamp),
         before=str(end_timestamp),
         bar=bar,
         limit="300",
+    )
+    return response["data"]
+
+
+@sleep_and_retry
+@limits(calls=20, period=2)
+def get_history_candlesticks(ccy, end_timestamp, bar):
+    # 获取交易产品历史K线数据 20次/2s
+    response = marketAPI.get_history_candlesticks(
+        instId=ccy,
+        after=str(end_timestamp),
+        bar=bar,
+        limit="100",
     )
     return response["data"]
 
@@ -173,13 +189,14 @@ def get_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
     all_data = []
 
     while True:
-        data = get_candlesticks(ccy, start_timestamp, end_timestamp, bar=bar)
+        data = get_history_candlesticks(ccy, end_timestamp, bar=bar)
         if not data:
             break
         all_data.extend(data)
 
-        # 更新 `after` 参数为最后一条数据的时间戳，用于下一次请求
-        start_timestamp = int(data[-1][0]) + 1  # 确保不重复获取上次请求的数据
+        if start_timestamp == int(data[0][0]):
+            break
+        end_timestamp = int(data[-1][0])
         time.sleep(0.01)
 
     return all_data
@@ -190,28 +207,37 @@ def get_price_data(ccy):
     cache_key = f"price_data:{ccy}"
     # 检查是否在 redis 存在
     cached_data = redis_client.get(cache_key)
+    now = datetime.datetime.now()
+    truncated_now = now.replace(second=0, microsecond=0)
     if cached_data:
         price_data = json.loads(cached_data)  # 转换为 list
         if len(price_data) > 0:
             # 根据上次数据确定开始时间
-            start_timestamp = price_data[-1][0] + 1
+            start_timestamp = price_data[-1][0]
         else:
-            start_time = datetime.datetime.now() - datetime.timedelta(days=7)
+            start_time = truncated_now - datetime.timedelta(days=7)
             start_timestamp = int(start_time.timestamp() * 1000)
 
     else:
-        start_time = datetime.datetime.now() - datetime.timedelta(days=7)
+        start_time = truncated_now - datetime.timedelta(days=7)
         start_timestamp = int(start_time.timestamp() * 1000)
         price_data = []
+    end_timestamp = int(truncated_now.timestamp() * 1000)
 
-    end_timestamp = int(datetime.datetime.now().timestamp() * 1000)
+    # 获取历史数据
+    historical_data = get_candles_paginated(ccy, "1m", start_timestamp, end_timestamp)
 
-    data = get_candles_paginated(ccy, "1m", str(start_timestamp), str(end_timestamp))
+    # 获取最近数据
+    recent_data = get_candlesticks(ccy, end_timestamp, "1m")
 
-    for candle in data:
+    # 合并数据
+    all_data = historical_data + recent_data
+    existing_timestamps = {entry[0] for entry in price_data}
+    for candle in all_data:
         timestamp = int(candle[0])
-        close_price = float(candle[4])
-        price_data.append([timestamp, close_price])
+        if timestamp not in existing_timestamps:
+            close_price = float(candle[4])
+            price_data.append([timestamp, close_price])
 
     # 根据时间戳排序
     price_data = sorted(price_data, key=lambda x: x[0])
@@ -402,7 +428,8 @@ def console_log(ccy, target_name, target_value):
 
 # 调用自动交易函数
 if __name__ == "__main__":
-    print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    symbols = ["CORE-USDT"]  # 币种代码列表
-    auto_trade(symbols)
-    print("自动交易系统已停止运行")
+    get_price_data("DOGE-USDT")
+    # print("欢迎使用自动交易系统！正在初始化，请稍候...")
+    # symbols = ["CEL-USDT"]  # 币种代码列表
+    # auto_trade(symbols)
+    # print("自动交易系统已停止运行")
