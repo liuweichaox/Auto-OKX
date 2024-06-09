@@ -403,6 +403,6 @@ def console_log(ccy, target_name, target_value):
 # 调用自动交易函数
 if __name__ == "__main__":
     print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    symbols = ["PEOPLE-USDT"]  # 币种代码列表
+    symbols = ["CORE-USDT"]  # 币种代码列表
     auto_trade(symbols)
     print("自动交易系统已停止运行")
