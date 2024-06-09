@@ -326,7 +326,7 @@ def auto_trade(symbols):
 
                     # 预测价格趋势
                     future_price = predict_trend(price_data)
-                    console_log(ccy, f"预测价格 ", future_price)
+                    console_log(ccy, f"预测价格", future_price)
 
                     # 获取当前价格
                     current_price = get_current_price(ccy)
@@ -346,8 +346,8 @@ def auto_trade(symbols):
                     if not sell_order:
                         console_log(
                             ccy,
-                            f"当前价格在 {stop_loss_price} ~ {take_profit_price} 范围内",
-                            current_price,
+                            f"当前价格在 {stop_loss_price} ~ {take_profit_price} 范围内, 涨跌: ",
+                            (current_price - buy_price),
                         )
                         continue
 
