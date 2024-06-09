@@ -323,6 +323,11 @@ def auto_trade(symbols):
 
                 # 监控止盈止损订单状态
                 while True:
+                    # 检查账户余额是否足够支付订单
+                    if not check_balance(ccy, size, stop_loss_price, "sell"):
+                        console_log(ccy, "账户余额不足买入", (size * stop_loss_price))
+                        break
+
                     # 获取历史价格数据
                     price_data = get_price_data(ccy)
 
