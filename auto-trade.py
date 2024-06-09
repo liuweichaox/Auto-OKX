@@ -315,9 +315,11 @@ def auto_trade(symbols):
                         console_log(ccy, "买入订单状态", buy_status)
                         break
                     else:
-                        console_log(ccy, "等待成交, 订单状态", buy_status)
-                        console_log(ccy, "目标价格", buy_price)
-                        console_log(ccy, "当前价格", get_current_price(ccy))
+                        console_log(
+                            ccy,
+                            f"等待成交, 买入价格: {buy_price}, 当前价格: {get_current_price(ccy)}, 订单状态",
+                            buy_status,
+                        )
 
                 # 监控止盈止损订单状态
                 while True:
@@ -329,14 +331,11 @@ def auto_trade(symbols):
                     # 获取历史价格数据
                     price_data = get_price_data(ccy)
 
-                    # 预测价格趋势
-                    future_price = predict_trend(price_data)
-                    console_log(ccy, f"预测价格", future_price)
-
                     # 获取当前价格
                     current_price = get_current_price(ccy)
-                    console_log(ccy, "实时价格", current_price)
 
+                    # 预测价格趋势
+                    future_price = predict_trend(price_data)
                     # 根据预测趋势设置止盈止损
                     sell_order = None
                     if current_price >= take_profit_price:
@@ -351,7 +350,7 @@ def auto_trade(symbols):
                     if not sell_order:
                         console_log(
                             ccy,
-                            f"当前价格在 {stop_loss_price} ~ {take_profit_price} 范围内, 涨跌: ",
+                            f"当前价格 {current_price} 在 {stop_loss_price} ~ {take_profit_price} 范围内, 未来一分钟预测价格: {future_price}, 涨跌: ",
                             (current_price - buy_price),
                         )
                         continue
