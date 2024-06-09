@@ -346,7 +346,7 @@ def auto_trade(symbols):
                         console_log(
                             ccy,
                             f"当前价格 {current_price} 在 {stop_loss_price} ~ {take_profit_price} 范围内, 未来一分钟预测价格: {future_price}, 涨跌: ",
-                            (current_price - buy_price),
+                            (round(current_price - buy_price, 5)),
                         )
                         continue
 
