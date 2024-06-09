@@ -371,7 +371,7 @@ def auto_trade(symbols):
 def console_log(ccy, target_name, target_value):
     print(
         f"币种: {ccy}",
-        "时间: {datetime.datetime.now()}",
+        f"时间: {datetime.datetime.now()}",
         f"{target_name}: {target_value}",
     )
 
