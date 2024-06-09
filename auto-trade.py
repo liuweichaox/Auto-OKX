@@ -105,7 +105,7 @@ def calculate_trade_size(
 
     minSz = float(product_info["minSz"])
     min_trade_size = trade_amount / current_price
-    min_trade_size = round(min_trade_size, 6)
+    min_trade_size = round(min_trade_size, 5)
     return max(min_trade_size, minSz)
 
 
