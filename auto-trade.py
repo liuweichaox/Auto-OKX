@@ -70,7 +70,8 @@ def get_product_info(ccy):
 def get_exchange_rate():
     # 获取汇率信息
     response = marketAPI.get_exchange_rate()
-    return float(response["data"][0]["usdCny"])
+    usdCny = response["data"][0]["usdCny"]
+    return float(usdCny)
 
 
 @sleep_and_retry
@@ -78,7 +79,8 @@ def get_exchange_rate():
 def get_current_price(ccy):
     # 获取当前价格
     response = marketAPI.get_ticker(ccy)
-    return float(response["data"][0]["last"])
+    last = response["data"][0]["last"]
+    return float(last)
 
 
 def calculate_kelly(risk_reward_ratio, win_probability):
@@ -100,10 +102,12 @@ def calculate_trade_size(
     risk_reward_ratio = reward / risk
     win_probability = 0.6  # 交易获胜概率
     account_balance = 1000 / exchange_rate
+
     kelly_fraction = calculate_kelly(risk_reward_ratio, win_probability)
     trade_amount = account_balance * kelly_fraction
 
-    minSz = float(product_info["minSz"])
+    minSz = product_info["minSz"]
+    minSz = float(minSz)
     min_trade_size = trade_amount / current_price
     min_trade_size = round(min_trade_size, 5)
     return max(min_trade_size, minSz)
@@ -247,16 +251,20 @@ def get_max_order_size(ccy, price):
     return response["data"][0]
 
 
-def check_balance(ccy, size, price, side):
+def check_balance(ccy, size, price):
     # 检查下单交易额度
     response = get_max_order_size(ccy, price)
-    if side == "buy":
-        maxBuy = float(response["maxBuy"])
-        return maxBuy >= size
-    if side == "sell":
-        maxSell = float(response["maxSell"])
-        return maxSell >= size
-    return False
+    maxBuy = response["maxBuy"]
+    maxBuy = float(maxBuy)
+    return maxBuy >= size
+
+
+@sleep_and_retry
+@limits(calls=20, period=2)
+def get_max_avail_size(ccy):
+    # 获取最大可用数量 20次/2s
+    info = accountAPI.get_max_avail_size(instId=ccy, tdMode="cash")
+    return info["data"][0]
 
 
 def auto_trade(symbols):
@@ -279,7 +287,8 @@ def auto_trade(symbols):
 
                 # 检查限价
                 price_limit = get_price_limit(ccy)
-                buyLmt = float(price_limit["buyLmt"])
+                buyLmt = price_limit["buyLmt"]
+                buyLmt = float(buyLmt)
                 if take_profit_price > buyLmt:
                     take_profit_price = buyLmt
 
@@ -294,7 +303,7 @@ def auto_trade(symbols):
                 console_log(ccy, "计算交易数量", size)
 
                 # 检查账户余额是否足够支付订单
-                if not check_balance(ccy, size, buy_price, "buy"):
+                if not check_balance(ccy, size, buy_price):
                     console_log(ccy, "账户余额不足买入", (size * buy_price))
                     break
 
@@ -307,7 +316,6 @@ def auto_trade(symbols):
                     console_log(ccy, "下单错误", msg)
                     break
                 buy_order_id = order["data"][0]["ordId"]
-                console_log(ccy, "下单", buy_order_id)
                 # 监控订单状态
                 while True:
                     buy_status = monitor_order_status(ccy, buy_order_id)
@@ -320,12 +328,20 @@ def auto_trade(symbols):
                             f"等待成交, 买入价格: {buy_price}, 当前价格: {get_current_price(ccy)}, 订单状态",
                             buy_status,
                         )
+                if buy_status == "canceled":
+                    continue
 
                 # 监控止盈止损订单状态
                 while True:
                     # 检查账户余额是否足够支付订单
-                    if not check_balance(ccy, size, stop_loss_price, "sell"):
-                        console_log(ccy, "账户余额不足买入", (size * stop_loss_price))
+                    avail = get_max_avail_size(ccy)
+                    availSell = avail["availSell"]
+                    availSell = float(availSell)
+                    minSz = product_info["minSz"]
+                    minSz = float(minSz)
+                    min_amount = round((size * stop_loss_price), 5)
+                    if availSell < minSz:
+                        console_log(ccy, "可用余额不足", availSell)
                         break
 
                     # 获取历史价格数据
@@ -339,13 +355,15 @@ def auto_trade(symbols):
                     # 根据预测趋势设置止盈止损
                     sell_order = None
                     if current_price >= take_profit_price:
-                        sell_order = place_order(ccy, "sell", size, current_price)
+                        sell_order = place_order(ccy, "sell", availSell, current_price)
 
                     if (
                         current_price <= stop_loss_price
                         or future_price < stop_loss_price
                     ):
-                        sell_order = place_order(ccy, "sell", size, stop_loss_price)
+                        sell_order = place_order(
+                            ccy, "sell", availSell, stop_loss_price
+                        )
 
                     if not sell_order:
                         console_log(
