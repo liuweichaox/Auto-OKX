@@ -347,6 +347,7 @@ def auto_trade(symbols):
                         console_log(
                             ccy,
                             f"当前价格在 {stop_loss_price} ~ {take_profit_price} 范围内",
+                            current_price,
                         )
                         continue
 
@@ -382,6 +383,6 @@ def console_log(ccy, target_name, target_value):
 # 调用自动交易函数
 if __name__ == "__main__":
     print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    symbols = ["DOGE-USDT"]  # 币种代码列表
+    symbols = ["CORE-USDT"]  # 币种代码列表
     auto_trade(symbols)
     print("自动交易系统已停止运行")
