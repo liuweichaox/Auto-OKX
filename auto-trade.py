@@ -21,10 +21,9 @@ logging.basicConfig(
     filemode="w",
 )
 logger = logging.getLogger("auto-trades")
-
-
+DEGUG = False
 # 实盘交易设置
-FLAG = "0"  # 实盘: 0 , 模拟盘：1
+FLAG = "1"  # 实盘: 0 , 模拟盘：1
 # API Key等信息
 if FLAG == "0":
     BASE_URL = "https://www.okx.com"
@@ -45,19 +44,19 @@ elif FLAG == "1":
 
 
 accountAPI = Account.AccountAPI(
-    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=False
+    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=DEGUG
 )
 marketAPI = MarketData.MarketAPI(
-    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=False
+    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=DEGUG
 )
 tradeAPI = Trade.TradeAPI(
-    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=False
+    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=DEGUG
 )
 publicAPI = PublicData.PublicAPI(
-    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=False
+    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=DEGUG
 )
 fundingAPI = Funding.FundingAPI(
-    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=False
+    API_KEY, SECRET_KEY, PASSPHRASE, False, flag=FLAG, debug=DEGUG
 )
 
 
@@ -161,15 +160,11 @@ def get_price_limit(ccy):
 
 @sleep_and_retry
 @limits(calls=40, period=2)
-def get_candlesticks(ccy, bar):
+def get_candlesticks(ccy, bar, start_timestamp):
     # 获取交易产品K线数据 40次/2s
-    now = datetime.datetime.now()
-    truncated_now = now.replace(second=0, microsecond=0) - datetime.timedelta(
-        minutes=10
-    )
     response = marketAPI.get_candlesticks(
         instId=ccy,
-        before=str(int(truncated_now.timestamp() * 1000)),
+        before=str(start_timestamp),
         bar=bar,
         limit="300",
     )
@@ -202,7 +197,6 @@ def get_history_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
         if any(int(row[0]) == start_timestamp for row in data):
             break
         end_timestamp = int(data[-1][0])
-        time.sleep(0.01)
 
     return all_data
 
@@ -217,37 +211,42 @@ def get_price_data(ccy):
     seven_days_ago_timestamp = int(
         (truncated_now - datetime.timedelta(days=7)).timestamp() * 1000
     )
+    end_timestamp = int(truncated_now.timestamp() * 1000)
     if cached_data:
         price_data = json.loads(cached_data)  # 转换为 list
         if len(price_data) > 0:
             start_timestamp = price_data[-1][0]
-            end_timestamp = int(truncated_now.timestamp() * 1000)
+            if start_timestamp < seven_days_ago_timestamp:
+                start_timestamp = seven_days_ago_timestamp
+                price_data = []
         else:
             start_timestamp = seven_days_ago_timestamp
-            end_timestamp = int(truncated_now.timestamp() * 1000)
             price_data = []
     else:
         start_timestamp = seven_days_ago_timestamp
-        end_timestamp = int(truncated_now.timestamp() * 1000)
         price_data = []
 
     # 获取历史数据
     historical_data = get_history_candles_paginated(
         ccy, "1m", start_timestamp, end_timestamp
     )
-    price_data.extend(fetch_price_data_from_candlesticks(price_data, historical_data))
+    if historical_data and len(historical_data) > 0:
+        existing_timestamps = {entry[0] for entry in price_data}
+        historical_data = fetch_price_data_from_candlesticks(
+            existing_timestamps, historical_data
+        )
+        price_data.extend(historical_data)
 
     # 获取最近数据
-    recent_data = get_candlesticks(ccy, "1m")
+    price_data = sorted(price_data, key=lambda x: x[0])
+    start_timestamp = price_data[-1][0] - 60000
+    recent_data = get_candlesticks(ccy, "1m", start_timestamp)
     if recent_data and len(recent_data) > 0:
-        recent_min_timestamp = recent_data[-1][0]
-        if not any(int(row[0]) == recent_min_timestamp for row in price_data):
-            historical_data = get_history_candles_paginated(
-                ccy, "1m", price_data[-1][0], recent_min_timestamp
-            )
-            price_data.extend(
-                fetch_price_data_from_candlesticks(price_data, historical_data)
-            )
+        existing_timestamps = {entry[0] for entry in price_data}
+        recent_data = fetch_price_data_from_candlesticks(
+            existing_timestamps, recent_data
+        )
+        price_data.extend(recent_data)
 
     price_data = [entry for entry in price_data if entry[0] >= seven_days_ago_timestamp]
 
@@ -260,8 +259,7 @@ def get_price_data(ccy):
     return price_data
 
 
-def fetch_price_data_from_candlesticks(price_data, candlesticks):
-    existing_timestamps = {entry[0] for entry in price_data}
+def fetch_price_data_from_candlesticks(existing_timestamps, candlesticks):
     results = []
     for candle in candlesticks:
         timestamp = int(candle[0])
@@ -402,12 +400,15 @@ def auto_trade(symbols, stop_loss_price_ratio=0.02, take_profit_price_ratio=0.03
                     future_price = predict_trend(price_data)
                     # 根据预测趋势设置止盈止损
                     sell_order = None
-                    if current_price >= take_profit_price:
+                    if (
+                        current_price >= take_profit_price
+                        and future_price < current_price
+                    ):
                         sell_order = place_order(ccy, "sell", availSell, current_price)
 
                     if (
                         current_price <= stop_loss_price
-                        or future_price < stop_loss_price
+                        or future_price <= stop_loss_price
                     ):
                         sell_order = place_order(
                             ccy, "sell", availSell, stop_loss_price
@@ -451,7 +452,13 @@ def console_log(ccy, target_name, target_value):
 
 # 调用自动交易函数
 if __name__ == "__main__":
-    print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    symbols = ["CEL-USDT"]  # 币种代码列表
-    auto_trade(symbols)
-    print("自动交易系统已停止运行")
+
+    while True:
+        feature_price = predict_trend(get_price_data("BTC-USDT"))
+        current_price = get_current_price("BTC-USDT")
+        print(f"feature_price: {feature_price},current_price: {current_price}")
+        time.sleep(10)
+    # print("欢迎使用自动交易系统！正在初始化，请稍候...")
+    # symbols = ["CEL-USDT"]  # 币种代码列表
+    # auto_trade(symbols)
+    # print("自动交易系统已停止运行")
