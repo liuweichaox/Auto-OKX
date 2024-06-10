@@ -197,7 +197,7 @@ def get_history_candles_paginated(ccy, bar, start_timestamp, end_timestamp):
         if any(int(row[0]) == start_timestamp for row in data):
             break
         end_timestamp = int(data[-1][0])
-
+        time.sleep(0.01)
     return all_data
 
 
@@ -453,6 +453,6 @@ def console_log(ccy, target_name, target_value):
 # 调用自动交易函数
 if __name__ == "__main__":
     print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    symbols = ["CEL-USDT"]  # 币种代码列表
+    symbols = ["DOGE-USDT"]  # 币种代码列表
     auto_trade(symbols)
     print("自动交易系统已停止运行")
