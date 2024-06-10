@@ -452,13 +452,7 @@ def console_log(ccy, target_name, target_value):
 
 # 调用自动交易函数
 if __name__ == "__main__":
-
-    while True:
-        feature_price = predict_trend(get_price_data("BTC-USDT"))
-        current_price = get_current_price("BTC-USDT")
-        print(f"feature_price: {feature_price},current_price: {current_price}")
-        time.sleep(10)
-    # print("欢迎使用自动交易系统！正在初始化，请稍候...")
-    # symbols = ["CEL-USDT"]  # 币种代码列表
-    # auto_trade(symbols)
-    # print("自动交易系统已停止运行")
+    print("欢迎使用自动交易系统！正在初始化，请稍候...")
+    symbols = ["CEL-USDT"]  # 币种代码列表
+    auto_trade(symbols)
+    print("自动交易系统已停止运行")
