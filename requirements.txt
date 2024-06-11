@@ -2,3 +2,5 @@ python-okx
 ratelimit
 scikit-learn
 redis
+vaderSentiment
+ta

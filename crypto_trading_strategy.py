@@ -1,0 +1,692 @@
+import json
+import time
+import logging
+import numpy as np
+import redis
+import requests
+import pandas as pd
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import time
+import ta
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+import okx.Account as Account
+import okx.MarketData as MarketData
+import okx.Trade as Trade
+import okx.PublicData as PublicData
+import okx.Funding as Funding
+from ratelimit import limits, sleep_and_retry
+import datetime
+from config import Config
+from fake_config import FakeConfig
+
+
+class TradingStrategy:
+    def __init__(
+        self, symbol, account_balance, risk_percentage, max_loss_limit, flag="1"
+    ):
+        self.symbol = symbol
+        self.account_balance = account_balance
+        self.risk_percentage = risk_percentage
+        self.max_loss_limit = max_loss_limit
+        self.lr_model = None
+        self.rf_model = None
+        self.price_data = None
+        if flag == "0":
+            self.config = Config()
+        else:
+            self.config = FakeConfig()
+
+        self.redis_client = redis.StrictRedis(
+            host=self.config.REDIS_HOST,
+            port=self.config.REIDS_PORT,
+            db=self.config.REDIS_DB,
+            password=self.config.REDIS_PASSWORD,
+        )
+        api_config = {
+            "api_key": self.config.API_KEY,
+            "api_secret_key": self.config.SECRET_KEY,
+            "passphrase": self.config.PASSPHRASE,
+            "use_server_time": False,
+            "domain": self.config.BASE_URL,
+            "debug": self.config.DEBUG,
+            "proxy": None,
+        }
+        self.accountAPI = Account.AccountAPI(**api_config)
+        self.marketAPI = MarketData.MarketAPI(**api_config)
+        self.tradeAPI = Trade.TradeAPI(**api_config)
+        self.publicAPI = PublicData.PublicAPI(**api_config)
+        self.fundingAPI = Funding.FundingAPI(**api_config)
+
+    @sleep_and_retry
+    @limits(calls=40, period=2)
+    def get_candlesticks(self, symbol, bar, start_timestamp):
+        # 获取交易产品K线数据 40次/2s
+        response = self.marketAPI.get_candlesticks(
+            instId=symbol,
+            before=str(start_timestamp),
+            bar=bar,
+            limit="300",
+        )
+        return response["data"]
+
+    @sleep_and_retry
+    @limits(calls=20, period=2)
+    def get_history_candlesticks(self, symbol, end_timestamp, bar):
+        # 获取交易产品历史K线数据 20次/2s
+        # 时间是从后往前找，所以是以最大的时间为准，向前查找
+        response = self.marketAPI.get_history_candlesticks(
+            instId=symbol,
+            after=str(end_timestamp),
+            bar=bar,
+            limit="100",
+        )
+        return response["data"]
+
+    @sleep_and_retry
+    @limits(calls=20, period=2)
+    def get_price_limit(self, symbol):
+        # 获取限价 20次/2s
+        response = self.publicAPI.get_price_limit(symbol)
+        buyLmt = response["data"][0]["buyLmt"]
+        buyLmt = float(buyLmt)
+        return buyLmt
+
+    @sleep_and_retry
+    @limits(calls=1, period=2)
+    def get_exchange_rate(self):
+        # 获取汇率信息
+        response = self.marketAPI.get_exchange_rate()
+        usdCny = response["data"][0]["usdCny"]
+        return float(usdCny)
+
+    @sleep_and_retry
+    @limits(calls=20, period=2)
+    def get_current_price(self, symbol):
+        # 获取当前价格
+        response = self.marketAPI.get_ticker(symbol)
+        last = response["data"][0]["last"]
+        return float(last)
+
+    def get_price_data(self, symbol, timeframe):
+        """
+        获取指定交易对和时间范围的价格数据。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        timeframe (str): 时间范围，例如"1D"表示每日。
+
+        返回:
+        DataFrame: 包含价格数据的DataFrame。
+        """
+        url = (
+            f"https://www.okx.com/api/v5/market/candles?instId={symbol}&bar={timeframe}"
+        )
+        response = requests.get(url)
+        data = response.json()
+
+        columns = [
+            "timestamp",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "volume_currency",
+        ]
+        df = pd.DataFrame(data["data"], columns=columns)
+
+        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
+        df.set_index("timestamp", inplace=True)
+
+        df[["open", "high", "low", "close", "volume"]] = df[
+            ["open", "high", "low", "close", "volume"]
+        ].apply(pd.to_numeric)
+
+        return df
+
+    def feature_engineering(self, df):
+        """
+        对价格数据进行特征工程处理。
+
+        参数:
+        df (DataFrame): 包含价格数据的DataFrame。
+
+        返回:
+        DataFrame: 处理后的DataFrame。
+        """
+        df["rsi"] = ta.momentum.rsi(df["close"], window=14)
+        indicator_bb = ta.volatility.BollingerBands(
+            close=df["close"], window=20, window_dev=2
+        )
+        df["bb_bbm"] = indicator_bb.bollinger_mavg()
+        df["bb_bbh"] = indicator_bb.bollinger_hband()
+        df["bb_bbl"] = indicator_bb.bollinger_lband()
+        df["returns"] = df["close"].pct_change()
+
+        df = self.calculate_macd(df)
+        df = self.calculate_atr(df)
+        df = self.calculate_adx(df)
+        df.dropna(inplace=True)
+        return df
+
+    def calculate_atr(self, df, window=14):
+        """
+        计算平均真实范围（ATR）指标。
+
+        参数:
+        df (DataFrame): 包含价格数据的DataFrame。
+        window (int): ATR计算窗口大小，默认为14。
+
+        返回:
+        DataFrame: 包含ATR指标的DataFrame。
+        """
+        df["atr"] = ta.volatility.average_true_range(
+            df["high"], df["low"], df["close"], window=window
+        )
+        return df
+
+    def calculate_macd(self, df):
+        """
+        计算MACD指标。
+
+        参数:
+        df (DataFrame): 包含价格数据的DataFrame。
+
+        返回:
+        DataFrame: 包含MACD指标的DataFrame。
+        """
+        df["macd"] = ta.trend.macd(df["close"])
+        df["macd_signal"] = ta.trend.macd_signal(df["close"])
+        df["macd_diff"] = df["macd"] - df["macd_signal"]
+        return df
+
+    def calculate_adx(self, df, window=14):
+        """
+        计算平均趋向指数（ADX）指标。
+
+        参数:
+        df (DataFrame): 包含价格数据的DataFrame。
+        window (int): ADX计算窗口大小，默认为14。
+
+        返回:
+        DataFrame: 包含ADX指标的DataFrame。
+        """
+        df["adx"] = ta.trend.adx(df["high"], df["low"], df["close"], window=window)
+        return df
+
+    def sentiment_analysis(self, text):
+        """
+        对文本进行情感分析。
+
+        参数:
+        text (str): 要分析的文本。
+
+        返回:
+        float: 情感分数。
+        """
+        analyzer = SentimentIntensityAnalyzer()
+        sentiment = analyzer.polarity_scores(text)
+        return sentiment["compound"]
+
+    def calculate_optimal_trade_size(
+        self, account_balance, risk_percentage, atr, stop_loss_pips
+    ):
+        """
+        计算最优交易量。
+
+        参数:
+        account_balance (float): 账户余额。
+        risk_percentage (float): 风险百分比。
+        atr (float): ATR指标值。
+        stop_loss_pips (float): 止损点数。
+
+        返回:
+        float: 最优交易量。
+        """
+        risk_amount = account_balance * risk_percentage
+        trade_size = risk_amount / (atr * stop_loss_pips)
+        return trade_size
+
+    def train_models(self, X, y):
+        """
+        训练线性回归和随机森林模型。
+
+        参数:
+        X (DataFrame): 特征数据。
+        y (Series): 目标数据。
+
+        返回:
+        tuple: 线性回归和随机森林模型。
+        """
+        lr_model = LinearRegression()
+        rf_model = RandomForestRegressor()
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+
+        lr_model.fit(X_train, y_train)
+        rf_model.fit(X_train, y_train)
+
+        lr_score = lr_model.score(X_test, y_test)
+        rf_score = rf_model.score(X_test, y_test)
+
+        print(f"线性回归模型得分: {lr_score}")
+        print(f"随机森林模型得分: {rf_score}")
+
+        return lr_model, rf_model
+
+    def execute_combined_trading_strategy(
+        self,
+        symbol,
+        account_balance,
+        risk_percentage,
+        lr_model,
+        rf_model,
+        max_loss_limit,
+    ):
+        """
+        执行组合交易策略。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        account_balance (float): 账户余额。
+        risk_percentage (float): 风险百分比。
+        lr_model (LinearRegression): 线性回归模型。
+        rf_model (RandomForestRegressor): 随机森林模型。
+        max_loss_limit (float): 最大损失比例。
+
+        返回:
+        None
+        """
+        price_data = self.get_price_data(symbol, "1D")
+        price_data = self.feature_engineering(price_data)
+
+        latest_data = price_data.iloc[-1]
+        latest_features = latest_data[
+            [
+                "open",
+                "high",
+                "low",
+                "volume",
+                "rsi",
+                "bb_bbm",
+                "bb_bbh",
+                "bb_bbl",
+                "returns",
+                "macd",
+                "macd_signal",
+                "atr",
+                "adx",
+            ]
+        ].values.reshape(1, -1)
+
+        lr_pred = lr_model.predict(latest_features)[0]
+        rf_pred = rf_model.predict(latest_features)[0]
+
+        sentiment_text = (
+            "Bitcoin price is soaring due to increased institutional interest."
+        )
+        sentiment_score = self.sentiment_analysis(sentiment_text)
+
+        avg_pred = self.combined_prediction(lr_pred, rf_pred, sentiment_score)
+
+        is_buy_condition = self.check_buy_condition(price_data)
+        is_sell_condition = self.check_sell_condition(price_data)
+
+        entry_price = latest_data["close"]
+        atr = latest_data["atr"]
+        rsi = latest_data["rsi"]
+        macd_diff = latest_data["macd_diff"]
+        adx = latest_data["adx"]
+
+        take_profit_price, stop_loss_price = self.dynamic_take_profit_and_stop_loss(
+            entry_price, atr, macd_diff, rsi, adx
+        )
+        optimal_trade_size = self.calculate_optimal_trade_size(
+            account_balance, risk_percentage, atr, 2 * atr
+        )
+
+        if is_buy_condition and avg_pred > entry_price:
+            print("满足买入条件...")
+            if self.check_order_quantity(
+                symbol, "buy", optimal_trade_size, entry_price
+            ):
+                response = self.place_order(symbol, "buy", optimal_trade_size)
+                print(response)
+                self.monitor_position(
+                    symbol,
+                    entry_price,
+                    take_profit_price,
+                    stop_loss_price,
+                    "buy",
+                    optimal_trade_size,
+                    max_loss_limit,
+                )
+            else:
+                print("订单数量不符合要求，取消买入操作。")
+        elif is_sell_condition and avg_pred < entry_price:
+            print("满足卖出条件...")
+            if self.check_order_quantity(
+                symbol, "sell", optimal_trade_size, entry_price
+            ):
+                response = self.place_order(symbol, "sell", optimal_trade_size)
+                print(response)
+                self.monitor_position(
+                    symbol,
+                    entry_price,
+                    take_profit_price,
+                    stop_loss_price,
+                    "sell",
+                    optimal_trade_size,
+                    max_loss_limit,
+                )
+            else:
+                print("订单数量不符合要求，取消卖出操作。")
+
+        else:
+            print("无交易动作")
+
+    def combined_prediction(self, lr_pred, rf_pred, sentiment_score):
+        """
+        计算组合预测值。
+
+        参数:
+        lr_pred (float): 线性回归预测值。
+        rf_pred (float): 随机森林预测值。
+        sentiment_score (float): 情感分数。
+
+        返回:
+        float: 组合预测值。
+        """
+        return (lr_pred + rf_pred + sentiment_score) / 3
+
+    def check_buy_condition(self, df):
+        """
+        检查是否满足买入条件。
+
+        参数:
+        df (DataFrame): 包含价格数据的DataFrame。
+
+        返回:
+        bool: 是否满足买入条件。
+        """
+        return df["rsi"].iloc[-1] < 30
+
+    def check_sell_condition(self, df):
+        """
+        检查是否满足卖出条件。
+
+        参数:
+        df (DataFrame): 包含价格数据的DataFrame。
+
+        返回:
+        bool: 是否满足卖出条件。
+        """
+        return df["rsi"].iloc[-1] > 70
+
+    def dynamic_take_profit_and_stop_loss(
+        self,
+        entry_price,
+        atr,
+        trend_strength,
+        rsi,
+        adx,
+        base_take_profit_ratio=0.05,
+        base_stop_loss_ratio=0.02,
+    ):
+        """
+        计算动态止盈止损价格。
+
+        参数:
+        entry_price (float): 买入/卖出价格。
+        atr (float): ATR指标值。
+        trend_strength (float): 趋势强度。
+        rsi (float): RSI指标值。
+        adx (float): ADX指标值。
+        base_take_profit_ratio (float): 基础止盈比例，默认为0.05。
+        base_stop_loss_ratio (float): 基础止损比例，默认为0.02。
+
+        返回:
+        tuple: 止盈价格和止损价格。
+        """
+        if rsi < 30:
+            take_profit_price = entry_price * (1 + base_take_profit_ratio + atr)
+            stop_loss_price = entry_price * (1 - base_stop_loss_ratio - atr)
+        elif rsi > 70:
+            take_profit_price = entry_price * (1 + base_take_profit_ratio - atr)
+            stop_loss_price = entry_price * (1 - base_stop_loss_ratio + atr)
+        else:
+            take_profit_price = entry_price * (1 + base_take_profit_ratio)
+            stop_loss_price = entry_price * (1 - base_stop_loss_ratio)
+
+        if adx > 25:
+            take_profit_price *= 1.1
+            stop_loss_price *= 0.9
+
+        return take_profit_price, stop_loss_price
+
+    def monitor_position(
+        self,
+        symbol,
+        entry_price,
+        take_profit_price,
+        stop_loss_price,
+        position_type,
+        quantity,
+        max_loss_limit,
+    ):
+        """
+        监控持仓并执行止盈止损操作。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        entry_price (float): 买入/卖出价格。
+        take_profit_price (float): 止盈价格。
+        stop_loss_price (float): 止损价格。
+        position_type (str): 持仓类型，"buy"或"sell"。
+        quantity (float): 交易量。
+        max_loss_limit (float): 最大损失比例。
+
+        返回:
+        None
+        """
+        while True:
+            price_data = self.get_price_data(symbol, "1D")
+            latest_data = price_data.iloc[-1]
+            current_price = latest_data["close"]
+
+            if position_type == "buy":
+                if current_price >= take_profit_price:
+                    print("达到止盈价格，卖出...")
+                    response = self.place_order(symbol, "sell", quantity)
+                    print(response)
+                    break
+                elif current_price <= stop_loss_price:
+                    print("达到止损价格，卖出...")
+                    response = self.place_order(symbol, "sell", quantity)
+                    print(response)
+                    break
+                elif (entry_price - current_price) / entry_price >= max_loss_limit:
+                    print("达到最大损失限制，卖出...")
+                    response = self.place_order(symbol, "sell", quantity)
+                    print(response)
+                    break
+            elif position_type == "sell":
+                if current_price <= take_profit_price:
+                    print("达到止盈价格，买入...")
+                    response = self.place_order(symbol, "buy", quantity)
+                    print(response)
+                    break
+                elif current_price >= stop_loss_price:
+                    print("达到止损价格，买入...")
+                    response = self.place_order(symbol, "buy", quantity)
+                    print(response)
+                    break
+                elif (current_price - entry_price) / entry_price >= max_loss_limit:
+                    print("达到最大损失限制，买入...")
+                    response = self.place_order(symbol, "buy", quantity)
+                    print(response)
+                    break
+            time.sleep(60)
+
+    def check_order_quantity(self, symbol, order_type, quantity, price):
+        """
+        检查订单数量是否符合交易所要求。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        order_type (str): 订单类型，"buy"或"sell"。
+        quantity (float): 订单数量。
+        price (float): 订单价格。
+
+        返回:
+        bool: 订单数量是否符合要求。
+        """
+        # 获取最小交易量、最大买入量和最大卖出量，这里只是示例
+        min_trade_size = self.get_min_trade_size(symbol)
+        max_buy_size = self.get_max_buy_size(symbol, price)
+        max_sell_size = self.get_max_sell_size(symbol, price)
+
+        if order_type == "buy":
+            return min_trade_size <= quantity <= max_buy_size
+        elif order_type == "sell":
+            return min_trade_size <= quantity <= max_sell_size
+        else:
+            return False
+
+    @sleep_and_retry
+    @limits(calls=20, period=2)
+    def get_instruments(self, symbol):
+        # 获取交易产品基础信息 20次/2s
+        return self.publicAPI.get_instruments(instType="SPOT", instId=symbol)
+
+    # 真实环境中需要实现获取最小交易量、最大买入量和最大卖出量的方法
+    def get_min_trade_size(self, symbol):
+        """
+        获取最小交易量。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+
+        返回:
+        float: 最小交易量。
+        """
+        # 实现获取最小交易量的逻辑，这里只是示例
+        response = self.get_instruments(symbol)
+        minSz = response["data"][0]["minSz"]
+        minSz = float(minSz)
+        return minSz
+
+    def get_max_buy_size(self, symbol, price):
+        """
+        获取最大买入量。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        price (float): 当前价格。
+
+        返回:
+        float: 最大买入量。
+        """
+        # 实现获取最大买入量的逻辑，这里只是示例
+        response = self.get_max_avail_size(symbol)
+        availBuy = response["data"][0]["availBuy"]
+        availBuy = float(availBuy)
+        return availBuy
+
+    @sleep_and_retry
+    @limits(calls=20, period=2)
+    def get_max_avail_size(self, ccy):
+        # 获取最大可用数量 20次/2s
+        return self.accountAPI.get_max_avail_size(instId=ccy, tdMode="cash")
+
+    def get_max_sell_size(self, symbol, price):
+        """
+        获取最大卖出量。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        price (float): 当前价格。
+
+        返回:
+        float: 最大卖出量。
+        """
+        # 实现获取最大卖出量的逻辑，这里只是示例
+        response = self.get_max_avail_size(symbol)
+        availSell = response["data"][0]["availSell"]
+        availSell = float(availSell)
+        return availSell
+
+    # 以下为交易所相关操作的示例，需根据实际情况实现
+    @sleep_and_retry
+    @limits(calls=60, period=2)
+    def place_order(self, symbol, order_type, quantity):
+        """
+        下单操作。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        order_type (str): 订单类型，"buy"或"sell"。
+        quantity (float): 交易量。
+
+        返回:
+        str: 下单结果。
+        """
+        # 实现下单逻辑
+
+        return self.tradeAPI.place_order(
+            instId=symbol,
+            tdMode="cash",
+            side=order_type,
+            ordType="limit",
+            sz=str(quantity),
+        )
+
+    # 真实环境中需要实现获取账户余额的方法
+    def get_account_balance(self, ccy=""):
+        """
+        获取账户余额。
+
+        返回:
+        float: 账户余额。
+        """
+        return self.accountAPI.get_account_balance(ccy)
+
+
+symbol = "BTC-USDT"
+account_balance = 10000  # 账户余额
+risk_percentage = 0.01  # 风险比例
+max_loss_limit = 0.02  # 最大损失比例为2%
+
+print("OK")
+strategy = TradingStrategy(
+    symbol, account_balance, risk_percentage, max_loss_limit, "1"
+)
+price_data = strategy.get_price_data("BTC-USDT", "1D")
+X = price_data[
+    [
+        "open",
+        "high",
+        "low",
+        "volume",
+        "rsi",
+        "bb_bbm",
+        "bb_bbh",
+        "bb_bbl",
+        "returns",
+        "macd",
+        "macd_signal",
+        "atr",
+        "adx",
+    ]
+]
+y = price_data["close"]
+
+# 训练模型
+lr_model, rf_model = strategy.train_models(X, y)
+strategy.execute_combined_trading_strategy(
+    "BTC-USDT", account_balance, risk_percentage, lr_model, rf_model, max_loss_limit
+)
