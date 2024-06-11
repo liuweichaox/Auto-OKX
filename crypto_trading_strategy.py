@@ -17,7 +17,7 @@ import okx.Trade as Trade
 import okx.PublicData as PublicData
 import okx.Funding as Funding
 from ratelimit import limits, sleep_and_retry
-import datetime
+from datetime import datetime
 from config import Config
 from fake_config import FakeConfig
 
@@ -26,6 +26,13 @@ class TradingStrategy:
     def __init__(
         self, symbol, account_balance, risk_percentage, max_loss_limit, flag="1"
     ):
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)s - %(message)s",
+            filename="app.log",
+            filemode="w",
+        )
+        self.logger = logging.getLogger()
         self.symbol = symbol
         self.account_balance = account_balance
         self.risk_percentage = risk_percentage
@@ -40,7 +47,7 @@ class TradingStrategy:
 
         self.redis_client = redis.StrictRedis(
             host=self.config.REDIS_HOST,
-            port=self.config.REIDS_PORT,
+            port=self.config.REDIS_PORT,
             db=self.config.REDIS_DB,
             password=self.config.REDIS_PASSWORD,
         )
@@ -58,31 +65,6 @@ class TradingStrategy:
         self.tradeAPI = Trade.TradeAPI(**api_config)
         self.publicAPI = PublicData.PublicAPI(**api_config)
         self.fundingAPI = Funding.FundingAPI(**api_config)
-
-    @sleep_and_retry
-    @limits(calls=40, period=2)
-    def get_candlesticks(self, symbol, bar, start_timestamp):
-        # 获取交易产品K线数据 40次/2s
-        response = self.marketAPI.get_candlesticks(
-            instId=symbol,
-            before=str(start_timestamp),
-            bar=bar,
-            limit="300",
-        )
-        return response["data"]
-
-    @sleep_and_retry
-    @limits(calls=20, period=2)
-    def get_history_candlesticks(self, symbol, end_timestamp, bar):
-        # 获取交易产品历史K线数据 20次/2s
-        # 时间是从后往前找，所以是以最大的时间为准，向前查找
-        response = self.marketAPI.get_history_candlesticks(
-            instId=symbol,
-            after=str(end_timestamp),
-            bar=bar,
-            limit="100",
-        )
-        return response["data"]
 
     @sleep_and_retry
     @limits(calls=20, period=2)
@@ -109,6 +91,41 @@ class TradingStrategy:
         last = response["data"][0]["last"]
         return float(last)
 
+    @sleep_and_retry
+    @limits(calls=40, period=2)
+    def get_candlesticks(self, symbol, bar, after=None):
+        # 获取K线数据。K线数据按请求的粒度分组返回，K线数据每个粒度最多可获取最近1,440条。 40次/2s
+        return self.marketAPI.get_candlesticks(
+            instId=symbol,
+            after=after,
+            bar=bar,
+            limit="300",
+        )
+
+    def get_latest_candlestick_data(self, instId, bar):
+        total_data = []
+        after = ""
+        while len(total_data) < 1440:
+            data = self.get_candlesticks(instId, bar, after)
+            data = data["data"]
+            if data is None or len(data) == 0:
+                break
+            total_data.extend(data)
+            after = data[-1][0]
+        return total_data
+
+    @sleep_and_retry
+    @limits(calls=20, period=2)
+    def get_history_candlesticks(self, symbol, end_timestamp, bar):
+        # 获取最近几年的历史k线数据(1s k线支持查询最近3个月的数据) 20次/2s
+        # 时间是从后往前找，所以是以最大的时间为准，向前查找
+        return self.marketAPI.get_history_candlesticks(
+            instId=symbol,
+            after=str(end_timestamp),
+            bar=bar,
+            limit="100",
+        )
+
     def get_price_data(self, symbol, timeframe):
         """
         获取指定交易对和时间范围的价格数据。
@@ -120,22 +137,18 @@ class TradingStrategy:
         返回:
         DataFrame: 包含价格数据的DataFrame。
         """
-        url = (
-            f"https://www.okx.com/api/v5/market/candles?instId={symbol}&bar={timeframe}"
-        )
-        response = requests.get(url)
-        data = response.json()
+        data = self.get_latest_candlestick_data(symbol, timeframe)
 
         columns = [
-            "timestamp",
-            "open",
-            "high",
-            "low",
-            "close",
-            "volume",
-            "volume_currency",
+            "timestamp",  # 开始时间
+            "open",  # 开盘价格
+            "high",  # 最高价格
+            "low",  # 最低价格
+            "close",  # 收盘价格
+            "volume",  # 交易量，以张为单位
         ]
-        df = pd.DataFrame(data["data"], columns=columns)
+        data_sliced = [row[:6] for row in data]
+        df = pd.DataFrame(data_sliced, columns=columns)
 
         df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
         df.set_index("timestamp", inplace=True)
@@ -170,6 +183,27 @@ class TradingStrategy:
         df = self.calculate_adx(df)
         df.dropna(inplace=True)
         return df
+
+    def fetch_feature(self, price_data):
+        X = price_data[
+            [
+                "open",
+                "high",
+                "low",
+                "volume",
+                "rsi",
+                "bb_bbm",
+                "bb_bbh",
+                "bb_bbl",
+                "returns",
+                "macd",
+                "macd_signal",
+                "atr",
+                "adx",
+            ]
+        ]
+        y = price_data["close"]
+        return X, y
 
     def calculate_atr(self, df, window=14):
         """
@@ -249,7 +283,7 @@ class TradingStrategy:
         trade_size = risk_amount / (atr * stop_loss_pips)
         return trade_size
 
-    def train_models(self, X, y):
+    def train_models(self, price_data):
         """
         训练线性回归和随机森林模型。
 
@@ -263,6 +297,7 @@ class TradingStrategy:
         lr_model = LinearRegression()
         rf_model = RandomForestRegressor()
 
+        X, y = strategy.fetch_feature(price_data)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42
         )
@@ -283,8 +318,6 @@ class TradingStrategy:
         symbol,
         account_balance,
         risk_percentage,
-        lr_model,
-        rf_model,
         max_loss_limit,
     ):
         """
@@ -294,15 +327,15 @@ class TradingStrategy:
         symbol (str): 交易对符号，例如"BTC-USDT"。
         account_balance (float): 账户余额。
         risk_percentage (float): 风险百分比。
-        lr_model (LinearRegression): 线性回归模型。
-        rf_model (RandomForestRegressor): 随机森林模型。
         max_loss_limit (float): 最大损失比例。
 
         返回:
         None
         """
-        price_data = self.get_price_data(symbol, "1D")
+        price_data = self.get_price_data(symbol, "1m")
         price_data = self.feature_engineering(price_data)
+        # 训练模型
+        lr_model, rf_model = strategy.train_models(price_data)
 
         latest_data = price_data.iloc[-1]
         latest_features = latest_data[
@@ -323,8 +356,26 @@ class TradingStrategy:
             ]
         ].values.reshape(1, -1)
 
-        lr_pred = lr_model.predict(latest_features)[0]
-        rf_pred = rf_model.predict(latest_features)[0]
+        latest_features_df = pd.DataFrame(
+            latest_features,
+            columns=[
+                "open",
+                "high",
+                "low",
+                "volume",
+                "rsi",
+                "bb_bbm",
+                "bb_bbh",
+                "bb_bbl",
+                "returns",
+                "macd",
+                "macd_signal",
+                "atr",
+                "adx",
+            ],
+        )
+        lr_pred = lr_model.predict(latest_features_df)[0]
+        rf_pred = rf_model.predict(latest_features_df)[0]
 
         sentiment_text = (
             "Bitcoin price is soaring due to increased institutional interest."
@@ -494,11 +545,15 @@ class TradingStrategy:
         None
         """
         while True:
-            price_data = self.get_price_data(symbol, "1D")
+            price_data = self.get_price_data(symbol, "1m")
             latest_data = price_data.iloc[-1]
             current_price = latest_data["close"]
 
             if position_type == "buy":
+                if not self.check_order_quantity(symbol, "sell", quantity, entry_price):
+                    quantity = self.get_max_sell_size(
+                        symbol,
+                    )
                 if current_price >= take_profit_price:
                     print("达到止盈价格，卖出...")
                     response = self.place_order(symbol, "sell", quantity)
@@ -515,6 +570,10 @@ class TradingStrategy:
                     print(response)
                     break
             elif position_type == "sell":
+                if not self.check_order_quantity(symbol, "buy", quantity, entry_price):
+                    quantity = self.get_max_sell_size(
+                        symbol,
+                    )
                 if current_price <= take_profit_price:
                     print("达到止盈价格，买入...")
                     response = self.place_order(symbol, "buy", quantity)
@@ -547,8 +606,8 @@ class TradingStrategy:
         """
         # 获取最小交易量、最大买入量和最大卖出量，这里只是示例
         min_trade_size = self.get_min_trade_size(symbol)
-        max_buy_size = self.get_max_buy_size(symbol, price)
-        max_sell_size = self.get_max_sell_size(symbol, price)
+        max_buy_size = self.get_max_buy_size(symbol)
+        max_sell_size = self.get_max_sell_size(symbol)
 
         if order_type == "buy":
             return min_trade_size <= quantity <= max_buy_size
@@ -599,11 +658,11 @@ class TradingStrategy:
 
     @sleep_and_retry
     @limits(calls=20, period=2)
-    def get_max_avail_size(self, ccy):
+    def get_max_avail_size(self, symbol):
         # 获取最大可用数量 20次/2s
-        return self.accountAPI.get_max_avail_size(instId=ccy, tdMode="cash")
+        return self.accountAPI.get_max_avail_size(instId=symbol, tdMode="cash")
 
-    def get_max_sell_size(self, symbol, price):
+    def get_max_sell_size(self, symbol):
         """
         获取最大卖出量。
 
@@ -655,38 +714,40 @@ class TradingStrategy:
         """
         return self.accountAPI.get_account_balance(ccy)
 
+    def run_trading_bot(self, symbol, account_balance, risk_percentage, max_loss_limit):
+        """
+        运行交易机器人，持续执行交易策略。
+
+        参数:
+        symbol (str): 交易对符号，例如"BTC-USDT"。
+        account_balance (float): 账户余额。
+        risk_percentage (float): 风险百分比。
+        max_loss_limit (float): 最大损失比例。
+
+        返回:
+        None
+        """
+        while True:
+            try:
+                self.execute_combined_trading_strategy(
+                    symbol,
+                    account_balance,
+                    risk_percentage,
+                    max_loss_limit,
+                )
+            except Exception as e:
+                print(f"发生错误: {e}")
+
+            # 等待1分钟后再次执行策略
+            time.sleep(60)
+
 
 symbol = "BTC-USDT"
-account_balance = 10000  # 账户余额
+account_balance = 1000  # 账户余额
 risk_percentage = 0.01  # 风险比例
 max_loss_limit = 0.02  # 最大损失比例为2%
 
-print("OK")
 strategy = TradingStrategy(
     symbol, account_balance, risk_percentage, max_loss_limit, "1"
 )
-price_data = strategy.get_price_data("BTC-USDT", "1D")
-X = price_data[
-    [
-        "open",
-        "high",
-        "low",
-        "volume",
-        "rsi",
-        "bb_bbm",
-        "bb_bbh",
-        "bb_bbl",
-        "returns",
-        "macd",
-        "macd_signal",
-        "atr",
-        "adx",
-    ]
-]
-y = price_data["close"]
-
-# 训练模型
-lr_model, rf_model = strategy.train_models(X, y)
-strategy.execute_combined_trading_strategy(
-    "BTC-USDT", account_balance, risk_percentage, lr_model, rf_model, max_loss_limit
-)
+strategy.run_trading_bot("BTC-USDT", account_balance, risk_percentage, max_loss_limit)

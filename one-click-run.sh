@@ -9,4 +9,4 @@ pip3 install  -r requirements.txt
 echo "Dependencies installed"
 echo "Virtual environment created and activated"
 echo "Running the application"
-python3 auto-trade.py
+python3 crypto_trading_strategy.py
