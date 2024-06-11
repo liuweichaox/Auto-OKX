@@ -468,7 +468,7 @@ class TradingStrategy:
         返回:
         bool: 是否满足买入条件。
         """
-        return df["rsi"].iloc[-1] < 30
+        return df["rsi"].iloc[-1] < 40
 
     def check_sell_condition(self, df):
         """
@@ -480,7 +480,7 @@ class TradingStrategy:
         返回:
         bool: 是否满足卖出条件。
         """
-        return df["rsi"].iloc[-1] > 70
+        return df["rsi"].iloc[-1] > 60
 
     def dynamic_take_profit_and_stop_loss(
         self,
@@ -507,10 +507,10 @@ class TradingStrategy:
         返回:
         tuple: 止盈价格和止损价格。
         """
-        if rsi < 30:
+        if rsi < 40:
             take_profit_price = entry_price * (1 + base_take_profit_ratio + atr)
             stop_loss_price = entry_price * (1 - base_stop_loss_ratio - atr)
-        elif rsi > 70:
+        elif rsi > 60:
             take_profit_price = entry_price * (1 + base_take_profit_ratio - atr)
             stop_loss_price = entry_price * (1 - base_stop_loss_ratio + atr)
         else:
