@@ -160,7 +160,7 @@ class TradingStrategy:
         df[["open", "high", "low", "close", "volume"]] = df[
             ["open", "high", "low", "close", "volume"]
         ].apply(pd.to_numeric)
-
+        df.sort_index(inplace=True)
         return df
 
     def feature_engineering(self, df):
@@ -341,7 +341,7 @@ class TradingStrategy:
         # 训练模型
         lr_model, rf_model = strategy.train_models(price_data)
 
-        latest_data = price_data.iloc[0]
+        latest_data = price_data.iloc[-1]
         latest_features = latest_data[
             [
                 "open",
