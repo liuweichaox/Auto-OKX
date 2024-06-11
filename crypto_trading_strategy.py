@@ -150,7 +150,11 @@ class TradingStrategy:
         data_sliced = [row[:6] for row in data]
         df = pd.DataFrame(data_sliced, columns=columns)
 
-        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
+        df["timestamp"] = (
+            pd.to_datetime(df["timestamp"], unit="ms")
+            .dt.tz_localize("UTC")
+            .dt.tz_convert("Asia/Shanghai")
+        )
         df.set_index("timestamp", inplace=True)
 
         df[["open", "high", "low", "close", "volume"]] = df[
@@ -337,7 +341,7 @@ class TradingStrategy:
         # 训练模型
         lr_model, rf_model = strategy.train_models(price_data)
 
-        latest_data = price_data.iloc[-1]
+        latest_data = price_data.iloc[0]
         latest_features = latest_data[
             [
                 "open",
