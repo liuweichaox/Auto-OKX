@@ -603,7 +603,7 @@ class TradingStrategy:
                     response = self.place_order(symbol, "buy", quantity)
                     print(response)
                     break
-            time.sleep(60)
+            time.sleep(5)
 
     def check_order_quantity(self, symbol, order_type, quantity):
         """
