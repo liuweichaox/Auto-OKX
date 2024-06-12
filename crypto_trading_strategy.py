@@ -559,6 +559,7 @@ class TradingStrategy:
         None
         """
         while True:
+            print("进入监控持仓并执行止盈止损操作")
             price_data = self.get_price_data(symbol, "1m")
             latest_data = price_data.iloc[-1]
             current_price = latest_data["close"]
@@ -603,6 +604,7 @@ class TradingStrategy:
                     response = self.place_order(symbol, "buy", quantity)
                     print(response)
                     break
+            print("继续下一轮监控持仓并执行止盈止损操作")
             time.sleep(5)
 
     def check_order_quantity(self, symbol, order_type, quantity):
