@@ -3,7 +3,6 @@ import time
 import logging
 import numpy as np
 import redis
-import requests
 import pandas as pd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import time
@@ -23,9 +22,7 @@ from fake_config import FakeConfig
 
 
 class TradingStrategy:
-    def __init__(
-        self, symbol, account_balance, risk_percentage, max_loss_limit, flag="1"
-    ):
+    def __init__(self, flag="1"):
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s - %(levelname)s - %(message)s",
@@ -33,13 +30,6 @@ class TradingStrategy:
             filemode="w",
         )
         self.logger = logging.getLogger()
-        self.symbol = symbol
-        self.account_balance = account_balance
-        self.risk_percentage = risk_percentage
-        self.max_loss_limit = max_loss_limit
-        self.lr_model = None
-        self.rf_model = None
-        self.price_data = None
         if flag == "0":
             self.config = Config()
         else:
@@ -151,10 +141,11 @@ class TradingStrategy:
         df = pd.DataFrame(data_sliced, columns=columns)
 
         df["timestamp"] = (
-            pd.to_datetime(df["timestamp"], unit="ms")
+            pd.to_datetime(pd.to_numeric(df["timestamp"]), unit="ms")
             .dt.tz_localize("UTC")
             .dt.tz_convert("Asia/Shanghai")
         )
+
         df.set_index("timestamp", inplace=True)
 
         df[["open", "high", "low", "close", "volume"]] = df[
@@ -284,7 +275,7 @@ class TradingStrategy:
         float: 最优交易量。
         """
         risk_amount = account_balance * risk_percentage
-        trade_size = risk_amount / (atr * stop_loss_pips)
+        trade_size = risk_amount / (atr / stop_loss_pips)
         return trade_size
 
     def train_models(self, price_data):
@@ -401,8 +392,22 @@ class TradingStrategy:
             entry_price, atr, macd_diff, rsi, adx
         )
         optimal_trade_size = self.calculate_optimal_trade_size(
-            account_balance, risk_percentage, atr, 2 * atr
+            account_balance, risk_percentage, atr, entry_price
         )
+
+        # 打印详细的检查信息
+        print(f"情绪分数: {sentiment_score}")
+        print(f"平均预测: {avg_pred}")
+        print(f"买入条件: {is_buy_condition}")
+        print(f"卖出条件: {is_sell_condition}")
+        print(f"入场价格 (买入/卖出价格): {entry_price}")
+        print(f"ATR (平均真实波动范围): {atr}")
+        print(f"RSI (相对强弱指数): {rsi}")
+        print(f"MACD差值 (指数平滑异同移动平均线差值): {macd_diff}")
+        print(f"ADX (平均趋向指数): {adx}")
+        print(f"止盈价格: {take_profit_price}")
+        print(f"止损价格: {stop_loss_price}")
+        print(f"最优交易量: {optimal_trade_size}")
 
         if is_buy_condition and avg_pred > entry_price:
             print("满足买入条件...")
@@ -442,7 +447,7 @@ class TradingStrategy:
                 print("订单数量不符合要求，取消卖出操作。")
 
         else:
-            print("无交易动作")
+            print("买入条件和卖出条件均不满足，无交易动作。")
 
     def combined_prediction(self, lr_pred, rf_pred, sentiment_score):
         """
@@ -507,6 +512,7 @@ class TradingStrategy:
         返回:
         tuple: 止盈价格和止损价格。
         """
+        # 基于RSI调整止盈止损价格
         if rsi < 40:
             take_profit_price = entry_price * (1 + base_take_profit_ratio + atr)
             stop_loss_price = entry_price * (1 - base_stop_loss_ratio - atr)
@@ -517,9 +523,18 @@ class TradingStrategy:
             take_profit_price = entry_price * (1 + base_take_profit_ratio)
             stop_loss_price = entry_price * (1 - base_stop_loss_ratio)
 
+        # 基于ADX调整止盈止损价格
         if adx > 25:
             take_profit_price *= 1.1
             stop_loss_price *= 0.9
+
+        # 基于趋势强度调整止盈止损价格
+        if trend_strength > 0:
+            take_profit_price *= 1 + trend_strength
+            stop_loss_price *= 1 - trend_strength
+        elif trend_strength < 0:
+            take_profit_price *= 1 - abs(trend_strength)
+            stop_loss_price *= 1 + abs(trend_strength)
 
         return take_profit_price, stop_loss_price
 
@@ -643,13 +658,12 @@ class TradingStrategy:
         minSz = float(minSz)
         return minSz
 
-    def get_max_buy_size(self, symbol, price):
+    def get_max_buy_size(self, symbol):
         """
         获取最大买入量。
 
         参数:
         symbol (str): 交易对符号，例如"BTC-USDT"。
-        price (float): 当前价格。
 
         返回:
         float: 最大买入量。
@@ -742,16 +756,14 @@ class TradingStrategy:
             except Exception as e:
                 print(f"发生错误: {e}")
 
-            # 等待1分钟后再次执行策略
-            time.sleep(60)
+            # 等待再次执行策略
+            time.sleep(10)
 
 
-symbol = "BTC-USDT"
+print("程序开始执行...")
 account_balance = 1000  # 账户余额
 risk_percentage = 0.01  # 风险比例
 max_loss_limit = 0.02  # 最大损失比例为2%
-
-strategy = TradingStrategy(
-    symbol, account_balance, risk_percentage, max_loss_limit, "1"
-)
-strategy.run_trading_bot("BTC-USDT", account_balance, risk_percentage, max_loss_limit)
+symbol = "DOGE-USDT"
+strategy = TradingStrategy("1")
+strategy.run_trading_bot(symbol, account_balance, risk_percentage, max_loss_limit)
