@@ -276,7 +276,7 @@ class TradingStrategy:
         """
         risk_amount = account_balance * risk_percentage
         trade_size = risk_amount / (atr / stop_loss_pips)
-        return trade_size
+        return round(trade_size, 4)
 
     def train_models(self, price_data):
         """
@@ -531,7 +531,7 @@ class TradingStrategy:
             take_profit_price *= 1 - abs(trend_strength)
             stop_loss_price *= 1 + abs(trend_strength)
 
-        return take_profit_price, stop_loss_price
+        return round(take_profit_price, 4), round(stop_loss_price, 4)
 
     def monitor_position(
         self,
@@ -667,7 +667,7 @@ class TradingStrategy:
         response = self.get_max_avail_size(symbol)
         availBuy = response["data"][0]["availBuy"]
         availBuy = float(availBuy)
-        return availBuy
+        return round(availBuy, 4)
 
     @sleep_and_retry
     @limits(calls=20, period=2)
@@ -690,7 +690,7 @@ class TradingStrategy:
         response = self.get_max_avail_size(symbol)
         availSell = response["data"][0]["availSell"]
         availSell = float(availSell)
-        return availSell
+        return round(availSell, 4)
 
     # 以下为交易所相关操作的示例，需根据实际情况实现
     @sleep_and_retry
@@ -713,7 +713,7 @@ class TradingStrategy:
             instId=symbol,
             tdMode="cash",
             side=order_type,
-            ordType="limit",
+            ordType="market",
             sz=str(quantity),
         )
 
