@@ -401,50 +401,45 @@ class TradingStrategy:
         print(f"买入条件: {is_buy_condition}")
         print(f"卖出条件: {is_sell_condition}")
         print(f"入场价格 (买入/卖出价格): {entry_price}")
-        print(f"ATR (平均真实波动范围): {atr}")
         print(f"RSI (相对强弱指数): {rsi}")
-        print(f"MACD差值 (指数平滑异同移动平均线差值): {macd_diff}")
-        print(f"ADX (平均趋向指数): {adx}")
         print(f"止盈价格: {take_profit_price}")
         print(f"止损价格: {stop_loss_price}")
         print(f"最优交易量: {optimal_trade_size}")
 
         if is_buy_condition and avg_pred > entry_price:
             print("满足买入条件...")
-            if self.check_order_quantity(
-                symbol, "buy", optimal_trade_size, entry_price
-            ):
-                response = self.place_order(symbol, "buy", optimal_trade_size)
-                print(response)
-                self.monitor_position(
+            if not self.check_order_quantity(symbol, "buy", optimal_trade_size):
+                optimal_trade_size = self.get_max_sell_size(
                     symbol,
-                    entry_price,
-                    take_profit_price,
-                    stop_loss_price,
-                    "buy",
-                    optimal_trade_size,
-                    max_loss_limit,
                 )
-            else:
-                print("订单数量不符合要求，取消买入操作。")
+            response = self.place_order(symbol, "buy", optimal_trade_size)
+            print(response)
+            self.monitor_position(
+                symbol,
+                entry_price,
+                take_profit_price,
+                stop_loss_price,
+                "buy",
+                optimal_trade_size,
+                max_loss_limit,
+            )
         elif is_sell_condition and avg_pred < entry_price:
             print("满足卖出条件...")
-            if self.check_order_quantity(
-                symbol, "sell", optimal_trade_size, entry_price
-            ):
-                response = self.place_order(symbol, "sell", optimal_trade_size)
-                print(response)
-                self.monitor_position(
+            if not self.check_order_quantity(symbol, "sell", optimal_trade_size):
+                optimal_trade_size = self.get_max_sell_size(
                     symbol,
-                    entry_price,
-                    take_profit_price,
-                    stop_loss_price,
-                    "sell",
-                    optimal_trade_size,
-                    max_loss_limit,
                 )
-            else:
-                print("订单数量不符合要求，取消卖出操作。")
+            response = self.place_order(symbol, "sell", optimal_trade_size)
+            print(response)
+            self.monitor_position(
+                symbol,
+                entry_price,
+                take_profit_price,
+                stop_loss_price,
+                "sell",
+                optimal_trade_size,
+                max_loss_limit,
+            )
 
         else:
             print("买入条件和卖出条件均不满足，无交易动作。")
@@ -473,7 +468,7 @@ class TradingStrategy:
         返回:
         bool: 是否满足买入条件。
         """
-        return df["rsi"].iloc[-1] < 40
+        return df["rsi"].iloc[-1] < 51
 
     def check_sell_condition(self, df):
         """
@@ -485,7 +480,7 @@ class TradingStrategy:
         返回:
         bool: 是否满足卖出条件。
         """
-        return df["rsi"].iloc[-1] > 60
+        return df["rsi"].iloc[-1] > 49
 
     def dynamic_take_profit_and_stop_loss(
         self,
@@ -513,10 +508,10 @@ class TradingStrategy:
         tuple: 止盈价格和止损价格。
         """
         # 基于RSI调整止盈止损价格
-        if rsi < 40:
+        if rsi < 51:
             take_profit_price = entry_price * (1 + base_take_profit_ratio + atr)
             stop_loss_price = entry_price * (1 - base_stop_loss_ratio - atr)
-        elif rsi > 60:
+        elif rsi > 49:
             take_profit_price = entry_price * (1 + base_take_profit_ratio - atr)
             stop_loss_price = entry_price * (1 - base_stop_loss_ratio + atr)
         else:
@@ -569,7 +564,7 @@ class TradingStrategy:
             current_price = latest_data["close"]
 
             if position_type == "buy":
-                if not self.check_order_quantity(symbol, "sell", quantity, entry_price):
+                if not self.check_order_quantity(symbol, "sell", quantity):
                     quantity = self.get_max_sell_size(
                         symbol,
                     )
@@ -589,7 +584,7 @@ class TradingStrategy:
                     print(response)
                     break
             elif position_type == "sell":
-                if not self.check_order_quantity(symbol, "buy", quantity, entry_price):
+                if not self.check_order_quantity(symbol, "buy", quantity):
                     quantity = self.get_max_sell_size(
                         symbol,
                     )
@@ -610,7 +605,7 @@ class TradingStrategy:
                     break
             time.sleep(60)
 
-    def check_order_quantity(self, symbol, order_type, quantity, price):
+    def check_order_quantity(self, symbol, order_type, quantity):
         """
         检查订单数量是否符合交易所要求。
 
