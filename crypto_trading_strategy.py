@@ -565,8 +565,8 @@ class TradingStrategy:
             current_price = latest_data["close"]
 
             print(f"止盈价格: {take_profit_price}")
-            print(f"卖出条件: {stop_loss_price}")
-            print(f"止损价格 (买入/卖出价格): {entry_price}")
+            print(f"止损价格: {stop_loss_price}")
+            print(f"(买入/卖出价格): {entry_price}")
 
             if position_type == "buy":
                 if not self.check_order_quantity(symbol, "sell", quantity):
