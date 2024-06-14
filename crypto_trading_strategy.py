@@ -757,7 +757,7 @@ class TradingStrategy:
                 )
             except Exception as e:
                 self.logger.error(traceback.format_exc())
-                print(f"发生错误: {e}")
+                print(traceback.format_exc())
 
             # 等待再次执行策略
             time.sleep(10)

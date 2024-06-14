@@ -1,0 +1,85 @@
+2024-06-14 16:54:03,258 - ERROR - Traceback (most recent call last):
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
+    yield
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 233, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_sync/connection_pool.py", line 216, in handle_request
+    raise exc from None
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_sync/connection_pool.py", line 196, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_sync/connection.py", line 99, in handle_request
+    raise exc
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_sync/connection.py", line 76, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_sync/connection.py", line 122, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_backends/sync.py", line 205, in connect_tcp
+    with map_exceptions(exc_map):
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/crypto_trading_strategy.py", line 752, in run_trading_bot
+    self.execute_combined_trading_strategy(
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/crypto_trading_strategy.py", line 331, in execute_combined_trading_strategy
+    price_data = self.get_price_data(symbol, "1m")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/crypto_trading_strategy.py", line 131, in get_price_data
+    data = self.get_latest_candlestick_data(symbol, timeframe)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/crypto_trading_strategy.py", line 100, in get_latest_candlestick_data
+    data = self.get_candlesticks(instId, bar, after)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/ratelimit/decorators.py", line 113, in wrapper
+    return func(*args, **kargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/ratelimit/decorators.py", line 80, in wrapper
+    return func(*args, **kargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/crypto_trading_strategy.py", line 89, in get_candlesticks
+    return self.marketAPI.get_candlesticks(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/okx/MarketData.py", line 37, in get_candlesticks
+    return self._request_with_params(GET, MARKET_CANDLES, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/okx/okxclient.py", line 52, in _request_with_params
+    return self._request(method, request_path, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/okx/okxclient.py", line 43, in _request
+    response = self.get(request_path, headers=header)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_client.py", line 1054, in get
+    return self.request(
+           ^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_client.py", line 827, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_client.py", line 1015, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 232, in handle_request
+    with map_httpcore_exceptions():
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/liuweichao/Develop/GitHub/Auto-OKX/.auto_okx_venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
