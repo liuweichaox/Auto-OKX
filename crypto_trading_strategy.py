@@ -755,6 +755,7 @@ class TradingStrategy:
                     max_loss_limit,
                 )
             except Exception as e:
+                self.logger.error(e)
                 print(f"发生错误: {e}")
 
             # 等待再次执行策略
