@@ -759,7 +759,7 @@ class TradingStrategy:
                 print(f"发生错误: {e}")
 
             # 等待再次执行策略
-            time.sleep(5)
+            time.sleep(10)
 
 
 print("程序开始执行...")
