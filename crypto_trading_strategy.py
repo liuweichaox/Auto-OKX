@@ -19,6 +19,7 @@ from ratelimit import limits, sleep_and_retry
 from datetime import datetime
 from config import Config
 from fake_config import FakeConfig
+import traceback
 
 
 class TradingStrategy:
@@ -755,7 +756,7 @@ class TradingStrategy:
                     max_loss_limit,
                 )
             except Exception as e:
-                self.logger.error(e)
+                self.logger.error(traceback.format_exc())
                 print(f"发生错误: {e}")
 
             # 等待再次执行策略
