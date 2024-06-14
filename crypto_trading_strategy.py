@@ -103,6 +103,7 @@ class TradingStrategy:
                 break
             total_data.extend(data)
             after = data[-1][0]
+            time.sleep(0.1)
         return total_data
 
     @sleep_and_retry
@@ -760,7 +761,7 @@ class TradingStrategy:
                 print(traceback.format_exc())
 
             # 等待再次执行策略
-            time.sleep(10)
+            time.sleep(30)
 
 
 print("程序开始执行...")
