@@ -562,9 +562,7 @@ class TradingStrategy:
         """
         while True:
             print("进入监控持仓并执行止盈止损操作")
-            price_data = self.get_price_data(symbol, "1m")
-            latest_data = price_data.iloc[-1]
-            current_price = latest_data["close"]
+            current_price = self.get_current_price(symbol)
 
             print(f"止盈价格: {take_profit_price}")
             print(f"止损价格: {stop_loss_price}")
