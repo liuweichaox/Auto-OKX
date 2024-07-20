@@ -1,12 +1,11 @@
 from models.train_deep_learning_model import train_models
 from data.data_fetcher import get_price_data
-from data.data_preprocessing import feature_engineering, identify_market_condition
+from data.data_preprocessing import feature_engineering
 
 price_data = get_price_data("BTC-USDT", "5m")
 
 price_data = feature_engineering(price_data)
 
-print(identify_market_condition(price_data))
 
 X = price_data[
     [

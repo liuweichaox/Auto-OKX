@@ -20,6 +20,7 @@ def feature_engineering(df):
     df["bb_bbh"] = indicator_bb.bollinger_hband()
     df["bb_bbl"] = indicator_bb.bollinger_lband()
     df["returns"] = df["close"].pct_change()
+    df["market_condition"] = df.apply(identify_market_condition, axis=1)
 
     df = calculate_macd(df)
     df = calculate_atr(df)
@@ -147,6 +148,17 @@ def calculate_kdj(df, window=9):
     return df
 
 
+def identify_market_condition(row):
+    if row["sma"] > row["ema"]:
+        if row["close"] > row["sma"]:
+            return "Uptrend (Single-directional)"
+        else:
+            return "Downtrend (Single-directional)"
+    if row["close"] < row["bb_high"] and row["close"] > row["bb_low"]:
+        return "Range-bound (Oscillating)"
+    return "Unknown"
+
+
 def fetch_feature(price_data):
     X = price_data[
         [
@@ -174,33 +186,3 @@ def fetch_feature(price_data):
     ]
     y = price_data["close"]
     return X, y
-
-
-def identify_market_condition(df):
-    """
-    识别市场行情。
-    """
-    latest = df.iloc[-1]
-
-    # 判断单边行情
-    if latest["sma"] > latest["ema"]:
-        if latest["close"] > latest["sma"]:
-            return "Uptrend (Single-directional)"
-        else:
-            return "Downtrend (Single-directional)"
-
-    # 判断震荡行情
-    if latest["close"] < latest["bb_high"] and latest["close"] > latest["bb_low"]:
-        return "Range-bound (Oscillating)"
-
-    # 判断V反极端行情
-    # 需要额外的历史数据来计算价格波动
-    if len(df) >= 3:
-        prev_1 = df.iloc[-2]
-        prev_2 = df.iloc[-3]
-        if (latest["close"] - prev_1["close"]) / prev_1["close"] > 0.1 and (
-            prev_1["close"] - prev_2["close"]
-        ) / prev_2["close"] > 0.1:
-            return "V-shaped Reversal (Extreme)"
-
-    return "Unknown"
