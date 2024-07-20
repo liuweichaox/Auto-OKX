@@ -4,4 +4,3 @@ scikit-learn
 redis
 vaderSentiment
 ta
-tensorflow

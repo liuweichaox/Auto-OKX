@@ -1,7 +1,3 @@
-import time
-import logging
-import redis
-import time
 import okx.Account as Account
 import okx.MarketData as MarketData
 import okx.Trade as Trade

@@ -1,35 +1,37 @@
-from sklearn.model_selection import train_test_split
-from utils.redis_utils import RedisClient
+from models.train_deep_learning_model import train_models
 from data.data_fetcher import get_price_data
-import pandas as pd
-import numpy as np
-import tensorflow as tf
+from data.data_preprocessing import feature_engineering, identify_market_condition
 
-data = get_price_data("BTC-USDT", "5m")
-# 归一化数据
-data["price"] = (data["price"] - data["price"].min()) / (
-    data["price"].max() - data["price"].min()
-)
+price_data = get_price_data("BTC-USDT", "5m")
 
-# 拆分数据集
-X_train, X_test, y_train, y_test = train_test_split(
-    data[["timestamp", "open", "high", "low", "volume"]], data["price"], test_size=0.2
-)
+price_data = feature_engineering(price_data)
 
-# 创建模型
-model = tf.keras.models.Sequential(
+print(identify_market_condition(price_data))
+
+X = price_data[
     [
-        tf.keras.layers.Dense(128, activation="relu"),
-        tf.keras.layers.Dense(128, activation="relu"),
-        tf.keras.layers.Dense(1),
+        "open",
+        "high",
+        "low",
+        "volume",
+        "rsi",
+        "bb_bbm",
+        "bb_bbh",
+        "bb_bbl",
+        "returns",
+        "macd",
+        "macd_signal",
+        "atr",
+        "adx",
+        "obv",
+        "sma",
+        "ema",
+        "rsv",
+        "k",
+        "d",
+        "j",
     ]
-)
+]
+y = price_data["close"]
 
-# 编译模型
-model.compile(optimizer="adam", loss="mse")
-
-# 训练模型
-model.fit(X_train, y_train, epochs=100)
-
-# 评估模型
-score = model.evaluate(X_test, y_test)
+lr_model, rf_model = train_models(X, y)

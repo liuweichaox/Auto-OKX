@@ -1,5 +1,0 @@
-2024-06-14 17:33:05,636 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=DOGE-USDT&bar=1m&limit=300 "HTTP/2 200 OK"
-2024-06-14 17:33:06,255 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=DOGE-USDT&after=1718339640000&bar=1m&limit=300 "HTTP/2 200 OK"
-2024-06-14 17:33:06,913 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=DOGE-USDT&after=1718321640000&bar=1m&limit=300 "HTTP/2 200 OK"
-2024-06-14 17:33:08,480 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=DOGE-USDT&after=1718303640000&bar=1m&limit=300 "HTTP/2 200 OK"
-2024-06-14 17:33:09,361 - INFO - HTTP Request: GET https://www.okx.com/api/v5/market/candles?instId=DOGE-USDT&after=1718285640000&bar=1m&limit=300 "HTTP/2 200 OK"
