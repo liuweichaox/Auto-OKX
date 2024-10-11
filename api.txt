@@ -1,5 +1,5 @@
-apikey = "f9a3c8c6-40c8-4eb9-ab2a-503a116f754d"
-secretkey = "8F58A6968EF039A9C8B54E492973728F"
+apikey = ""
+secretkey = ""
 IP = ""
 备注名 = "okx"
 权限 = "读取/提现/交易"
